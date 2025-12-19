@@ -5,6 +5,8 @@ import Repositories from './pages/Repositories/Repositories/Repositories'
 import Workspace from './pages/Workspace/Workspace/Workspace'
 import Repository from './pages/Repository/Repository/Repository'
 import Workspaces from './pages/Workspaces/Workspaces/Workspaces'
+import Header from "src/common-components/Header";    
+import Footer from "src/common-components/Footer";
 
 function App() {
   return (
