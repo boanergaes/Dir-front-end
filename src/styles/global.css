@@ -8,4 +8,5 @@ body {
     background-color: var(--dark-bg);
     color: var(--primary-text-color);
     font-family: var(--main-font-family);
+    min-height: 100vh;
 }
