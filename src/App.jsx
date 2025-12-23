@@ -5,13 +5,14 @@ import Repositories from './pages/Repositories/Repositories/Repositories'
 import Workspace from './pages/Workspace/Workspace/Workspace'
 import Repository from './pages/Repository/Repository/Repository'
 import Workspaces from './pages/Workspaces/Workspaces/Workspaces'
+import Explore from './pages/Explore/Explore/Explore'
 
 function App() {
   return (
     <>
       {/* This is temporary routing to let everyone see the page they are building */}
       <Routes>
-        <Route path='/' element={<Dashboard />}/> 
+        <Route path='/' element={<Explore />}/> 
         <Route path='/repositories' element={<Repositories />} />
         <Route path='/repository' element={<Repository />} />
         <Route path='/workspace' element={<Workspace />} />
