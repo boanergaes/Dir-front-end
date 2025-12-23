@@ -3,6 +3,7 @@ import RepositoryCard from './RepositoryCard';
 import MOCK_REPOS from '../../../mock-backend/repositories.json';
 
 function RepositoryList() {
+
     // Search state for filtering repositories
     const [searchTerm, setSearchTerm] = useState("");
     
@@ -10,12 +11,14 @@ function RepositoryList() {
     const filteredRepos = MOCK_REPOS.filter((repo) =>
         repo.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
+    
     return (
         <div className="min-h-screen bg-gray-50 p-6">
+
             {/* USER PROFILE HEADER - Shows avatar, name, and statistics */}
             <header className="mb-8">
                 <div className="flex items-center justify-between mb-6">
+
                     {/* Left: User avatar and basic info */}
                     <div className="flex items-center gap-4">
                         <img 
