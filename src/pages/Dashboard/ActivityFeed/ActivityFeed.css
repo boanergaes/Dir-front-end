@@ -1,0 +1,54 @@
+.activity-card-container {
+    background-color: var(--card-bg); /* #1D1D29 */
+    border: 1px solid var(--main-border-color);
+    border-radius: 12px;
+    padding: 24px;
+    
+    /* FIX: Ensure it fills the space the Dashboard gives it */
+    width: 100%; 
+    height:100%;
+    margin: 0; 
+    box-sizing: border-box;
+}
+
+.card-header-title {
+    color: var(--primary-text-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.activity-items-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Vertical gap between items */
+}
+
+.activity-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+}
+
+.activity-description {
+    color: var(--secondary-text-color); /* #9CA3AF */
+    font-size: 0.9rem;
+}
+
+.user-highlight {
+    color: var(--primary-text-color);
+    font-weight: 600;
+}
+
+.message-text {
+    font-style: italic;
+    opacity: 0.8;
+    margin-left: 4px;
+}

@@ -1,0 +1,53 @@
+.stats-container {
+    width: 100%;
+
+}
+
+.stat-card {
+    background-color: var(--card-bg); /* #1D1D29 */
+    border: 1px solid var(--main-border-color);
+    border-radius: 12px;
+    
+    /* Responsive Sizing */
+    flex: 1 1 200px;    /* Grow and shrink, but start at 200px */
+    max-width: 300px;   /* Prevents cards from getting too wide on huge screens */
+    height: 160px;      /* Maintained height for vertical centering */
+    
+    /* Perfect Centering */
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+    
+    font-family: var(--main-font-family);
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px); /* Subtle lift on hover */
+}
+
+.stat-label {
+    color: var(--secondary-text-color);
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.stat-value {
+    color: var(--primary-text-color);
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 640px) {
+    .stat-card {
+        flex: 1 1 45%; /* Show 2 cards per row on small screens */
+        height: 120px;
+    }
+    .stat-value {
+        font-size: 2rem;
+    }
+}

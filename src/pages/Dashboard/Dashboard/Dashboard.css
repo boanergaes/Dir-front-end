@@ -1,0 +1,102 @@
+/* Dashboard.css */
+body{
+padding:0;
+}
+.dashboard-wrapper {
+  display: flex; /* This forces the two divisions to be side-by-side */
+  flex-direction: row;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--dark-bg);
+  justify-content: center;
+  z-index: index 1000px;;
+}
+
+/* Division 1: Sidebar Styling */
+.sidebar-container {
+  width: 260px; /* Fixed width prevents it from shrinking */
+  min-width: 260px;
+  height: 100vh;
+  position: sticky; /* Keeps it on screen while you scroll */
+  top: 0;
+  background-color: #0D0D12;
+  border-right: 1px solid var(--main-border-color);
+}
+
+/* Division 2: Main Content Area Styling */
+.dashboard-content-area {
+  flex: 1; /* Automatically takes up all space to the right of the sidebar */
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Important: allows children to shrink and not overflow */
+}
+
+.dashboard-main {
+  padding: 40px; /* Space around your cards */
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Ensure the middle sections still work inside the new container */
+.middle-layout-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  width: 100%;
+}
+
+.hamburger-btn{
+justify-content: flex-end;}
+
+/* Dashboard.css */
+
+/* 1. Hide the mobile header by default (Desktop view) */
+.mobile-top-nav {
+  display: none; 
+  width: 100%;
+  height: 60px;
+  background-color: #0D0D12;
+  border-bottom: 1px solid var(--main-border-color);
+  padding: 0 20px;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+}
+
+/* 2. Responsive Breakpoint (Tablet and Mobile) */
+@media (max-width: 1024px) {
+  
+  /* Show the toggle bar only on small screens */
+  .mobile-top-nav {
+    display: flex; 
+  }
+
+  /* Hide the desktop sidebar if you prefer, or let it slide */
+  .sidebar-container {
+    position: fixed;
+    transform: translateX(-100%); /* Keeps it hidden until toggled */
+  }
+
+  /* Add padding so content doesn't hide under the mobile bar */
+  .dashboard-content-area {
+    padding-top: 60px; 
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .middle-layout-container {
+    /* Change from two columns to one single column */
+    grid-template-columns: 1fr; 
+    gap: 30px; /* Increased gap for better vertical breathing room */
+  }
+
+  /* Ensure the children fill the whole width */
+  .activity-column, 
+  .side-column {
+    width: 100%;
+  }
+}
