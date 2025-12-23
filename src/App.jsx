@@ -1,5 +1,6 @@
-﻿import './App.css'
-import { Routes, Route } from 'react-router'
+﻿// App.jsx
+import './App.css'
+import { Routes, Route } from 'react-router-dom'
 import Dashboard from './pages/Dashboard/Dashboard/Dashboard'
 import Repositories from './pages/Repositories/Repositories/Repositories'
 import Workspace from './pages/Workspace/Workspace/Workspace'
@@ -7,6 +8,7 @@ import Repository from './pages/Repository/Repository/Repository'
 import Workspaces from './pages/Workspaces/Workspaces/Workspaces'
 import Header from "./common-components/Header/Header";
 import Footer from "./common-components/Footer/Footer";
+import CreateRepository from './pages/createRepository/createRepository/CreateRepository';
 
 function App() {
   return (

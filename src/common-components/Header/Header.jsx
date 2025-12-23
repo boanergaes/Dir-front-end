@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Header.css';
 import {
   Bell,
@@ -20,8 +21,17 @@ import {
 } from 'lucide-react';
 
 function Header() {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isCreateRepoOpen, setIsCreateRepoOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+  const [selectedRole, setSelectedRole] = useState('contributor');
+  const [workspaceName, setWorkspaceName] = useState('');
+  const [description, setDescription] = useState('');
+  const [repoName, setRepoName] = useState('');
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  
   const [notifications, setNotifications] = useState([
     {
       id: 1,
@@ -54,72 +64,116 @@ function Header() {
       hasMore: true
     }
   ]);
+  
   const [pastNotifications, setPastNotifications] = useState([]);
   const [isLoadingPast, setIsLoadingPast] = useState(false);
 
   const notificationPanelRef = useRef(null);
   const bellBtnRef = useRef(null);
 
-  // Handle New Repository button click
+  // ===== CREATE REPOSITORY MODAL =====
   const handleNewRepoClick = () => {
-    const createRepo = window.confirm('Create a new repository?');
-    if (createRepo) {
-      alert('Redirecting to repository creation...');
+    setIsCreateRepoOpen(true);
+  };
+
+  const handleCloseCreateRepo = () => {
+    setIsCreateRepoOpen(false);
+    setWorkspaceName('');
+    setDescription('');
+    setRepoName('');
+    setIsInviteModalOpen(false);
+  };
+
+  const handleCreateWorkspace = (e) => {
+    if (e) e.preventDefault();
+    
+    if (!workspaceName.trim()) {
+      alert("Please enter a workspace name");
+      return;
+    }
+    
+    if (!repoName.trim()) {
+      alert("Please enter a repository name");
+      return;
+    }
+    
+    console.log(`Creating workspace: ${workspaceName} with repo: ${repoName}`);
+    alert(`Workspace "${workspaceName}" created successfully!`);
+    
+    handleCloseCreateRepo();
+  };
+
+  const handleOpenInviteModal = (e) => {
+    if (e) e.stopPropagation();
+    setIsInviteModalOpen(true);
+  };
+
+  const handleCloseInviteModal = () => {
+    setIsInviteModalOpen(false);
+    setSearchInput('');
+  };
+
+  const handleSendInvite = () => {
+    if (!searchInput.trim()) {
+      alert("Please enter a collaborator username");
+      return;
+    }
+    
+    console.log(`Sending invite to: ${searchInput} as ${selectedRole}`);
+    alert(`Invitation sent to ${searchInput} as ${selectedRole}`);
+    handleCloseInviteModal();
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && searchInput.trim() && isInviteModalOpen) {
+      handleSendInvite();
     }
   };
 
-  // Handle menu item click
+  // ===== MENU NAVIGATION =====
   const handleMenuItemClick = (itemName) => {
-    alert(`Navigating to ${itemName}...`);
+    const routeMap = {
+      'Dashboard': '/dashboard',
+      'Explore': '/explore',
+      'Repositories': '/repositories',
+      'Workspaces': '/workspaces',
+      'Settings': '/settings',
+      'Create Repository': '/create-repository'
+    };
+    
+    const route = routeMap[itemName];
+    if (route) {
+      navigate(route);
+    }
+    
     setIsMenuOpen(false);
   };
 
-  // Handle logout
-  const handleLogout = () => {
-    const confirmLogout = window.confirm('Are you sure you want to log out?');
-    if (confirmLogout) {
-      alert('Logging out...');
-    }
-  };
-
-  // Toggle notification panel
+  // ===== NOTIFICATION PANEL =====
   const toggleNotificationPanel = (e) => {
     if (e) e.stopPropagation();
     setIsNotificationOpen(!isNotificationOpen);
   };
 
-  // Close notification panel
   const closeNotificationPanel = () => {
     setIsNotificationOpen(false);
   };
 
-  // Mark all as read
   const handleMarkAllAsRead = () => {
     const updatedNotifications = notifications.map(notification => ({
       ...notification,
       read: true
     }));
     setNotifications(updatedNotifications);
-    
-    // Show success message
-    alert('All notifications marked as read');
-    
-    // Close panel after delay
-    setTimeout(() => {
-      closeNotificationPanel();
-    }, 800);
   };
 
-  // Close single notification
   const handleCloseNotification = (id) => {
     setNotifications(prev => prev.filter(notification => notification.id !== id));
   };
 
-  // Load past notifications
   const handleLoadPastNotifications = () => {
     setIsLoadingPast(true);
     
-    // Simulate API call
     setTimeout(() => {
       const newPastNotifications = [
         {
@@ -149,15 +203,12 @@ function Header() {
       
       setPastNotifications(prev => [...newPastNotifications, ...prev]);
       setIsLoadingPast(false);
-      alert(`Loaded ${newPastNotifications.length} past notifications`);
     }, 1200);
   };
 
-  // Handle action button clicks
   const handleActionButton = (action, notificationId) => {
     switch(action.toLowerCase()) {
       case 'reply':
-        alert('Opening reply dialog...');
         break;
       case 'mark as read':
         setNotifications(prev => 
@@ -167,28 +218,18 @@ function Header() {
               : notification
           )
         );
-        alert('Notification marked as read');
         break;
       case 'review':
-        alert('Opening pull request review...');
         break;
       case 'reject':
-        if (window.confirm('Are you sure you want to reject this pull request?')) {
-          handleCloseNotification(notificationId);
-          alert('Pull request rejected');
-        }
+        handleCloseNotification(notificationId);
         break;
       case 'checkout':
-        alert('Checking security alert details...');
         break;
       case 'ignore':
-        if (window.confirm('Ignore this security alert? This action cannot be undone.')) {
-          handleCloseNotification(notificationId);
-          alert('Alert ignored');
-        }
+        handleCloseNotification(notificationId);
         break;
       default:
-        alert(`${action} action performed`);
     }
   };
 
@@ -205,7 +246,6 @@ function Header() {
       }
     };
 
-    // Close with Escape key
     const handleEscapeKey = (event) => {
       if (event.key === 'Escape' && isNotificationOpen) {
         closeNotificationPanel();
@@ -223,7 +263,6 @@ function Header() {
     };
   }, [isNotificationOpen]);
 
-  // Render notification item based on type
   const renderNotificationItem = (notification, isPast = false) => {
     if (notification.type === 'message') {
       return (
@@ -364,7 +403,7 @@ function Header() {
         <div className="nav-container">
           {/* Left: Logo */}
           <div className="left-section">
-            <div className="logo-div">
+            <div className="logo-div" onClick={() => navigate('/')}>
               <img 
                 src="/assets/images/Dir logo.png" 
                 alt="logo" 
@@ -374,7 +413,7 @@ function Header() {
 
           {/* Right: Button + Bell + Hamburger */}
           <div className="right-section">
-            {/* New Repository Button */}
+            {/* New Repository Button - Opens Create Repository Modal */}
             <button
               onClick={handleNewRepoClick}
               className="new-repo-btn"
@@ -424,10 +463,7 @@ function Header() {
                 </div>
 
                 <div className="notifications-list">
-                  {/* Current Notifications */}
                   {notifications.map(notification => renderNotificationItem(notification))}
-                  
-                  {/* Past Notifications */}
                   {pastNotifications.map(notification => renderNotificationItem(notification, true))}
                 </div>
 
@@ -495,6 +531,11 @@ function Header() {
           <span>Workspaces</span>
         </div>
 
+        <div className="menu-item" onClick={() => handleMenuItemClick('Create Repository')}>
+          <Plus size={20} />
+          <span>Create Repository</span>
+        </div>
+
         <div className="menu-item" onClick={() => handleMenuItemClick('Settings')}>
           <Settings size={20} />
           <span>Settings</span>
@@ -503,13 +544,182 @@ function Header() {
         <hr className="menu-divider" />
 
         {/* Logout */}
-        <div className="menu-item logout-item" onClick={handleLogout}>
+        <div className="menu-item logout-item" onClick={() => {
+          const confirmLogout = window.confirm('Are you sure you want to log out?');
+          if (confirmLogout) {
+            // Handle logout logic here
+          }
+        }}>
           <LogOut size={20} />
           <span>Log out</span>
         </div>
       </div>
 
-      {/* Overlay */}
+      {/* Create Repository Modal */}
+      {isCreateRepoOpen && (
+        <div className="modal-overlay" onClick={handleCloseCreateRepo}>
+          <div 
+            className="modal-content create-repo-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <h2>Create New Workspace</h2>
+              <button 
+                className="close-modal-btn"
+                onClick={handleCloseCreateRepo}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="modal-body">
+              <form onSubmit={handleCreateWorkspace}>
+                <div className="form-group">
+                  <label htmlFor="workspaceName">Workspace name</label>
+                  <input 
+                    type="text" 
+                    placeholder="My workspace.." 
+                    id="workspaceName"
+                    value={workspaceName}
+                    onChange={(e) => setWorkspaceName(e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="descriptionWorkspace">Description</label>
+                  <textarea 
+                    id="descriptionWorkspace"
+                    placeholder="This workspace is ..."
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows="4"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="workingRepository">Working Repository</label>
+                  <input 
+                    type="text" 
+                    id="workingRepository" 
+                    placeholder="Repo name..."
+                    value={repoName}
+                    onChange={(e) => setRepoName(e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div className="modal-actions">
+                  <div className="action-row">
+                    <button 
+                      type="button" 
+                      className="secondary-btn"
+                      onClick={handleOpenInviteModal}
+                    >
+                      Invite Collaborators
+                    </button>
+                    <button type="button" className="secondary-btn">
+                      <Plus size={16} /> Add Channel
+                    </button>
+                  </div>
+                  <div className="action-row">
+                    <button type="submit" className="primary-btn">
+                      Create Workspace
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Invite Collaborators Modal */}
+      {isInviteModalOpen && (
+        <div className="modal-overlay invite-modal-overlay" onClick={handleCloseInviteModal}>
+          <div 
+            className="modal-content invite-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <h2>Invite Collaborators</h2>
+              <p>Search by Username, Full name or Email</p>
+            </div>
+            
+            <div className="modal-body">
+              <div className="input-group">
+                <div className="search-input">
+                  <input 
+                    type="text" 
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Collaborator username"
+                    className="search-field"
+                    autoFocus
+                  />
+                </div>
+              </div>
+              
+              <div className="role-section">
+                <h3>Role</h3>
+                <hr className="modal-divider" />
+                <div className="role-options">
+                  <label className="role-option">
+                    <input 
+                      type="radio" 
+                      name="role" 
+                      value="owner" 
+                      checked={selectedRole === 'owner'}
+                      onChange={(e) => setSelectedRole(e.target.value)}
+                    />
+                    <span>Owner</span>
+                  </label>
+                  <label className="role-option">
+                    <input 
+                      type="radio" 
+                      name="role" 
+                      value="admin" 
+                      checked={selectedRole === 'admin'}
+                      onChange={(e) => setSelectedRole(e.target.value)}
+                    />
+                    <span>Admin</span>
+                  </label>
+                  <label className="role-option">
+                    <input 
+                      type="radio" 
+                      name="role" 
+                      value="contributor" 
+                      checked={selectedRole === 'contributor'}
+                      onChange={(e) => setSelectedRole(e.target.value)}
+                    />
+                    <span>Contributor</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="invite-buttons">
+                <button 
+                  className="invite-action-btn" 
+                  onClick={handleSendInvite}
+                  type="button"
+                >
+                  Invite Collaborators
+                </button>
+                <button 
+                  className="cancel-action-btn" 
+                  onClick={handleCloseInviteModal}
+                  type="button"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Menu Overlay */}
       <div 
         className={`menu-overlay ${isMenuOpen ? 'active' : ''}`}
         onClick={() => setIsMenuOpen(false)}

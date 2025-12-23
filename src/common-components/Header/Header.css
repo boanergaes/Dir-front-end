@@ -416,15 +416,6 @@
     transform: translateY(0);
 }
 
-/* Remove individual button colors */
-.reply-btn,
-.mark-read-btn,
-.review-btn,
-.reject-btn,
-.checkout-btn,
-.ignore-btn {
-}
-
 /* Notification Actions Row */
 .notification-actions-row {
     display: flex;
@@ -464,6 +455,310 @@
 
 .load-past-btn:active {
     transform: translateY(0);
+}
+
+/* ===== MODAL OVERLAY STYLES ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 4000;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background-color: var(--dark-bg);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 480px;
+    overflow: hidden;
+    border: 1px solid var(--main-border-color);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { 
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to { 
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ===== CREATE REPOSITORY MODAL ===== */
+.create-repo-modal {
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.create-repo-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--main-border-color);
+}
+
+.create-repo-modal h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--primary-text-color);
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--secondary-text-color);
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.close-modal-btn:hover {
+    background-color: var(--secondary-button-hover);
+}
+
+.create-repo-modal .modal-body {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--primary-text-color);
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #303036;
+    border: 1px solid var(--main-border-color);
+    border-radius: 6px;
+    color: var(--primary-text-color);
+    font-family: var(--main-font-family);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--active-text-color);
+}
+
+/* Modal actions with rows */
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.action-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+.action-row .secondary-btn,
+.action-row .primary-btn {
+    flex: 1;
+}
+
+.modal-actions .secondary-btn {
+    padding: 0.75rem;
+    background-color: var(--secondary-button);
+    color: var(--primary-text-color);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.modal-actions .secondary-btn:hover {
+    background-color: var(--secondary-button-hover);
+}
+
+.modal-actions .primary-btn {
+    padding: 0.75rem;
+    background-color: var(--primary-button);
+    color: var(--primary-text-color);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.modal-actions .primary-btn:hover {
+    background-color: var(--primary-button-hover);
+}
+
+/* ===== INVITE MODAL STYLES ===== */
+.invite-modal {
+    max-width: 480px;
+}
+
+.invite-modal .modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--main-border-color);
+    text-align: center;
+}
+
+.invite-modal .modal-header h2 {
+    font-size: 1.2rem;
+    color: var(--primary-text-color);
+    margin-bottom: 0.5rem;
+}
+
+.invite-modal .modal-header p {
+    font-size: 0.9rem;
+    color: var(--secondary-text-color);
+    margin: 0;
+}
+
+.invite-modal .modal-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.search-input {
+    width: 100%;
+}
+
+.search-field {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: #303036;
+    border: 1px solid var(--main-border-color);
+    border-radius: 8px;
+    color: var(--primary-text-color);
+    font-family: var(--main-font-family);
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.search-field:focus {
+    outline: none;
+    border-color: var(--active-text-color);
+}
+
+.role-section h3 {
+    font-size: 1rem;
+    color: var(--primary-text-color);
+    margin-bottom: 0.75rem;
+}
+
+.modal-divider {
+    border: none;
+    border-top: 1px solid var(--main-border-color);
+    margin: 0 0 1rem 0;
+}
+
+.role-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.role-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background-color: #303036;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.role-option:hover {
+    background-color: #3a3a40;
+}
+
+.role-option input[type="radio"] {
+    accent-color: var(--active-text-color);
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.role-option span {
+    color: var(--primary-text-color);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.invite-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.invite-action-btn {
+    padding: 0.85rem;
+    background-color: var(--primary-button);
+    color: var(--primary-text-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    font-family: var(--main-font-family);
+    transition: background-color 0.2s;
+    width: 100%;
+}
+
+.invite-action-btn:hover {
+    background-color: var(--primary-button-hover);
+}
+
+.cancel-action-btn {
+    padding: 0.85rem;
+    background-color: var(--secondary-button);
+    color: var(--primary-text-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+    font-family: var(--main-font-family);
+    transition: background-color 0.2s;
+    width: 100%;
+}
+
+.cancel-action-btn:hover {
+    background-color: var(--secondary-button-hover);
 }
 
 /* Hamburger Button */
@@ -695,6 +990,16 @@
         width: 100%;
         text-align: center;
     }
+
+    /* Modal responsive */
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .action-row {
+        flex-direction: column;
+    }
 }
 
 @media (max-width: 480px) {
@@ -708,6 +1013,20 @@
     
     .notification-item {
         padding: 10px;
+    }
+    
+    .create-repo-modal .modal-header,
+    .invite-modal .modal-header {
+        padding: 1.25rem;
+    }
+    
+    .create-repo-modal .modal-body,
+    .invite-modal .modal-body {
+        padding: 1.25rem;
+    }
+    
+    .invite-buttons {
+        gap: 0.5rem;
     }
 }
 
