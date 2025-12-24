@@ -11,7 +11,7 @@
     align-items: center; 
     flex-wrap: wrap; 
     gap: 1.5rem; 
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto; 
 }
 
@@ -27,7 +27,7 @@
     font-weight: 600;
 }
 
-/* Style only the copyright Lucide icon */
+/* Styling the copyright*/
 .container:nth-child(3) svg {
     color: var(--secondary-text-color);
     stroke: currentColor;

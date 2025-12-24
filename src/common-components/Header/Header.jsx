@@ -25,12 +25,11 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isCreateRepoOpen, setIsCreateRepoOpen] = useState(false);
-  const [searchInput, setSearchInput] = useState('');
-  const [selectedRole, setSelectedRole] = useState('contributor');
-  const [workspaceName, setWorkspaceName] = useState('');
-  const [description, setDescription] = useState('');
   const [repoName, setRepoName] = useState('');
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [description, setDescription] = useState('');
+  const [visibility, setVisibility] = useState('private');
+  const [readme, setReadme] = useState('no');
+  const [gitignore, setGitignore] = useState('no');
   
   const [notifications, setNotifications] = useState([
     {
@@ -78,67 +77,56 @@ function Header() {
 
   const handleCloseCreateRepo = () => {
     setIsCreateRepoOpen(false);
-    setWorkspaceName('');
-    setDescription('');
     setRepoName('');
-    setIsInviteModalOpen(false);
+    setDescription('');
+    setVisibility('private');
+    setReadme('no');
+    setGitignore('no');
   };
 
-  const handleCreateWorkspace = (e) => {
+  const handleCreateRepository = (e) => {
     if (e) e.preventDefault();
-    
-    if (!workspaceName.trim()) {
-      alert("Please enter a workspace name");
-      return;
-    }
     
     if (!repoName.trim()) {
       alert("Please enter a repository name");
       return;
     }
     
-    console.log(`Creating workspace: ${workspaceName} with repo: ${repoName}`);
-    alert(`Workspace "${workspaceName}" created successfully!`);
+    console.log('Creating repository:', {
+      name: repoName,
+      description,
+      visibility,
+      readme,
+      gitignore
+    });
+    
+    alert(`Repository "${repoName}" created successfully!`);
     
     handleCloseCreateRepo();
   };
 
-  const handleOpenInviteModal = (e) => {
-    if (e) e.stopPropagation();
-    setIsInviteModalOpen(true);
-  };
-
-  const handleCloseInviteModal = () => {
-    setIsInviteModalOpen(false);
-    setSearchInput('');
-  };
-
-  const handleSendInvite = () => {
-    if (!searchInput.trim()) {
-      alert("Please enter a collaborator username");
-      return;
-    }
-    
-    console.log(`Sending invite to: ${searchInput} as ${selectedRole}`);
-    alert(`Invitation sent to ${searchInput} as ${selectedRole}`);
-    handleCloseInviteModal();
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && searchInput.trim() && isInviteModalOpen) {
-      handleSendInvite();
+  const handleOptionChange = (optionType, value) => {
+    switch (optionType) {
+      case 'visibility':
+        setVisibility(value);
+        break;
+      case 'readme':
+        setReadme(value);
+        break;
+      case 'gitignore':
+        setGitignore(value);
+        break;
+      default:
     }
   };
 
   // ===== MENU NAVIGATION =====
   const handleMenuItemClick = (itemName) => {
     const routeMap = {
-      'Dashboard': '/dashboard',
-      'Explore': '/explore',
+      'Dashboard': '/',
       'Repositories': '/repositories',
-      'Workspaces': '/workspaces',
-      'Settings': '/settings',
-      'Create Repository': '/create-repository'
+      'Workspaces': '/workspaces'
+      // No 'Create Repository' here
     };
     
     const route = routeMap[itemName];
@@ -510,33 +498,26 @@ function Header() {
 
         <hr className="menu-divider" />
 
-        {/* Menu Items */}
+        {/* Menu Items - NO CREATE REPOSITORY HERE */}
         <div className="menu-item" onClick={() => handleMenuItemClick('Dashboard')}>
           <LayoutDashboard size={20} />
           <span>Dashboard</span>
         </div>
 
-        <div className="menu-item" onClick={() => handleMenuItemClick('Explore')}>
-          <Search size={20} />
-          <span>Explore</span>
-        </div>
-
-        <div className="menu-item" onClick={() => handleMenuItemClick('Repositories')}>
+        <div className="menu-item" onClick={() => navigate('/repositories')}>
           <Folder size={20} />
           <span>Repositories</span>
         </div>
 
-        <div className="menu-item" onClick={() => handleMenuItemClick('Workspaces')}>
+        <div className="menu-item" onClick={() => navigate('/workspaces')}>
           <Briefcase size={20} />
           <span>Workspaces</span>
         </div>
 
-        <div className="menu-item" onClick={() => handleMenuItemClick('Create Repository')}>
-          <Plus size={20} />
-          <span>Create Repository</span>
-        </div>
-
-        <div className="menu-item" onClick={() => handleMenuItemClick('Settings')}>
+        <div className="menu-item" onClick={() => {
+          // Settings - you might need to create this page
+          setIsMenuOpen(false);
+        }}>
           <Settings size={20} />
           <span>Settings</span>
         </div>
@@ -549,13 +530,14 @@ function Header() {
           if (confirmLogout) {
             // Handle logout logic here
           }
+          setIsMenuOpen(false);
         }}>
           <LogOut size={20} />
           <span>Log out</span>
         </div>
       </div>
 
-      {/* Create Repository Modal */}
+      {/* Create Repository Modal - Only opens from header button */}
       {isCreateRepoOpen && (
         <div className="modal-overlay" onClick={handleCloseCreateRepo}>
           <div 
@@ -563,7 +545,7 @@ function Header() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="modal-header">
-              <h2>Create New Workspace</h2>
+              <h2>Create New Repository</h2>
               <button 
                 className="close-modal-btn"
                 onClick={handleCloseCreateRepo}
@@ -573,147 +555,104 @@ function Header() {
             </div>
 
             <div className="modal-body">
-              <form onSubmit={handleCreateWorkspace}>
+              <form onSubmit={handleCreateRepository}>
                 <div className="form-group">
-                  <label htmlFor="workspaceName">Workspace name</label>
+                  <label htmlFor="repoName">Repository name</label>
                   <input 
                     type="text" 
-                    placeholder="My workspace.." 
-                    id="workspaceName"
-                    value={workspaceName}
-                    onChange={(e) => setWorkspaceName(e.target.value)}
-                    required
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="descriptionWorkspace">Description</label>
-                  <textarea 
-                    id="descriptionWorkspace"
-                    placeholder="This workspace is ..."
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    rows="4"
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="workingRepository">Working Repository</label>
-                  <input 
-                    type="text" 
-                    id="workingRepository" 
-                    placeholder="Repo name..."
+                    placeholder="my-repository" 
+                    id="repoName"
                     value={repoName}
                     onChange={(e) => setRepoName(e.target.value)}
                     required
                   />
                 </div>
                 
+                <div className="form-group">
+                  <label htmlFor="description">Description</label>
+                  <input 
+                    type="text" 
+                    id="description" 
+                    placeholder="A brief description of your repository..."
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </div>
+                
+                {/* All options in one flex container */}
+                <div className="options-container">
+                  {/* Visibility */}
+                  <div className="option-item">
+                    <label className="option-question">Visibility</label>
+                    <div className="toggle-buttons">
+                      <button 
+                        type="button"
+                        className={`toggle-btn ${visibility === 'public' ? 'active' : ''}`}
+                        onClick={() => handleOptionChange('visibility', 'public')}
+                      >
+                        Public
+                      </button>
+                      <button 
+                        type="button"
+                        className={`toggle-btn ${visibility === 'private' ? 'active' : ''}`}
+                        onClick={() => handleOptionChange('visibility', 'private')}
+                      >
+                        Private
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* README */}
+                  <div className="option-item">
+                    <label className="option-question">Add README</label>
+                    <div className="toggle-buttons">
+                      <button 
+                        type="button"
+                        className={`toggle-btn ${readme === 'yes' ? 'active' : ''}`}
+                        onClick={() => handleOptionChange('readme', 'yes')}
+                      >
+                        Yes
+                      </button>
+                      <button 
+                        type="button"
+                        className={`toggle-btn ${readme === 'no' ? 'active' : ''}`}
+                        onClick={() => handleOptionChange('readme', 'no')}
+                      >
+                        No
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* .gitignore */}
+                  <div className="option-item">
+                    <label className="option-question">Add .gitignore</label>
+                    <div className="toggle-buttons">
+                      <button 
+                        type="button"
+                        className={`toggle-btn ${gitignore === 'yes' ? 'active' : ''}`}
+                        onClick={() => handleOptionChange('gitignore', 'yes')}
+                      >
+                        Yes
+                      </button>
+                      <button 
+                        type="button"
+                        className={`toggle-btn ${gitignore === 'no' ? 'active' : ''}`}
+                        onClick={() => handleOptionChange('gitignore', 'no')}
+                      >
+                        No
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="modal-actions">
                   <div className="action-row">
-                    <button 
-                      type="button" 
-                      className="secondary-btn"
-                      onClick={handleOpenInviteModal}
-                    >
-                      Invite Collaborators
-                    </button>
-                    <button type="button" className="secondary-btn">
-                      <Plus size={16} /> Add Channel
-                    </button>
-                  </div>
-                  <div className="action-row">
                     <button type="submit" className="primary-btn">
-                      Create Workspace
+                      Create Repository
                     </button>
                   </div>
                 </div>
               </form>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Invite Collaborators Modal */}
-      {isInviteModalOpen && (
-        <div className="modal-overlay invite-modal-overlay" onClick={handleCloseInviteModal}>
-          <div 
-            className="modal-content invite-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-header">
-              <h2>Invite Collaborators</h2>
-              <p>Search by Username, Full name or Email</p>
-            </div>
-            
-            <div className="modal-body">
-              <div className="input-group">
-                <div className="search-input">
-                  <input 
-                    type="text" 
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Collaborator username"
-                    className="search-field"
-                    autoFocus
-                  />
-                </div>
-              </div>
-              
-              <div className="role-section">
-                <h3>Role</h3>
-                <hr className="modal-divider" />
-                <div className="role-options">
-                  <label className="role-option">
-                    <input 
-                      type="radio" 
-                      name="role" 
-                      value="owner" 
-                      checked={selectedRole === 'owner'}
-                      onChange={(e) => setSelectedRole(e.target.value)}
-                    />
-                    <span>Owner</span>
-                  </label>
-                  <label className="role-option">
-                    <input 
-                      type="radio" 
-                      name="role" 
-                      value="admin" 
-                      checked={selectedRole === 'admin'}
-                      onChange={(e) => setSelectedRole(e.target.value)}
-                    />
-                    <span>Admin</span>
-                  </label>
-                  <label className="role-option">
-                    <input 
-                      type="radio" 
-                      name="role" 
-                      value="contributor" 
-                      checked={selectedRole === 'contributor'}
-                      onChange={(e) => setSelectedRole(e.target.value)}
-                    />
-                    <span>Contributor</span>
-                  </label>
-                </div>
-              </div>
-
-              <div className="invite-buttons">
-                <button 
-                  className="invite-action-btn" 
-                  onClick={handleSendInvite}
-                  type="button"
-                >
-                  Invite Collaborators
-                </button>
-                <button 
-                  className="cancel-action-btn" 
-                  onClick={handleCloseInviteModal}
-                  type="button"
-                >
-                  Cancel
-                </button>
-              </div>
             </div>
           </div>
         </div>
