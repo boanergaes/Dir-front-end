@@ -32,7 +32,7 @@
     --mid-dim-font-color: #C4C4C4;
     
     /* border color */
-    --main-border-color: hsla(0, 3%, 94%, .45);
+    --main-border-color: rgba(239, 238, 238, 0.13);
     --popup-border: #EFEEEE; /* opacity supposed to be - 28%*/
 
     /* shadow color */

@@ -1,0 +1,6 @@
+(.repos-page){
+	padding:20px;
+}
+.repos-title{color:var(--primary-text-color);font-family:var(--main-font-family);margin-bottom:12px}
+.repos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+
