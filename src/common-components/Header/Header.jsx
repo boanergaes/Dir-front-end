@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Header.css";
+import { Bell, Menu, Plus } from "lucide-react";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,12 +31,13 @@ function Header() {
   return (
     <>
       {/* Main Navigation */}
-      <nav className="bg-[#161b22] border border-b-[#30363d] py-4 px-8 fixed top-0 left-0 right-0 z-1000">
+      <nav className="bg-[#1A1A1E] border border-b border-[#30363d] py-4 px-8 fixed top-0 left-0 right-0 z-1000">
         <div className="flex justify-between items-center max-w-7xl">
           {/* Left: Logo */}
           <div className="left-section">
-            <div className="logo-div">
-              <img src="/images/Dir logo.png" alt="logo" />
+            <div className="flex justify-center items-center gap-2">
+              <img src="/assets/logo.svg" alt="logo" />
+              <span className="text-2xl font-bold">Dir</span>
             </div>
           </div>
 
@@ -43,16 +45,16 @@ function Header() {
           <div className="right-section">
             {/* Your New Repository Button */}
             <button onClick={handleNewRepoClick} className="new-repo-btn">
-              <img src="/images/plus 1.png" alt="plus" />
+              <Plus />
               <span>New Repository</span>
             </button>
 
             {/* Bell Icon */}
-            <img src="/images/bell 1.png" alt="bell" className="bell-icon" />
+            <Bell />
 
             {/* Hamburger Button */}
             <button onClick={() => setIsMenuOpen(true)} className="hamburger">
-              <img src="/images/menu 1.png" alt="menu" />
+              <Menu />
             </button>
           </div>
         </div>

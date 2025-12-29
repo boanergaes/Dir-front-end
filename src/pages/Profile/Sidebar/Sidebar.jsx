@@ -1,3 +1,4 @@
+import { Pencil } from "lucide-react";
 import Button from "../../../common-components/button";
 
 export default function Sidebar() {
@@ -9,7 +10,14 @@ export default function Sidebar() {
           src="https://comebackapp.net/wp-content/uploads/2018/12/portrait-square-04.jpg"
           alt="profilepic"
         />
-        <Button className={"absolute top-2 right-4 px-4"}>Edit </Button>
+        <Button
+          className={
+            "absolute top-2 right-4 px-4 flex justify-center items-center gap-3"
+          }
+        >
+          <Pencil size={20} />
+          <span className="font-normal">Edit</span>
+        </Button>
       </div>
       <div>
         <h3 className="font-semibold text-2xl">Preferences</h3>

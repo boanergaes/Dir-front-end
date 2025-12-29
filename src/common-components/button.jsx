@@ -12,6 +12,7 @@ export default function Button({
     primary: "bg-[#1F1F56]",
     danger: "bg-[#950606]",
     base: "bg-[#242429]",
+    outline: "bg-transparent",
   };
   return (
     <button

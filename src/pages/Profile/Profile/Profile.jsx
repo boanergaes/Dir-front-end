@@ -1,7 +1,8 @@
-import Button from "../../../common-components/button";
+import { LogOut } from "lucide-react";
 import Header from "../../../common-components/Header/Header";
 import ProfileForm from "../ProfileForm/ProfileForm";
 import Sidebar from "../Sidebar/Sidebar";
+import Button from "../../../common-components/button";
 
 export default function Profile() {
   return (
@@ -11,7 +12,13 @@ export default function Profile() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between py-6">
           <h1 className="text-lg font-semibold">Public Profile</h1>
-          <Button className="px-3">Log out</Button>
+          <Button
+            variant="outline"
+            className="flex justify-center items-center gap-3 py-3 px-3"
+          >
+            <LogOut />
+            <span className="text-[#9CA3AF]">Log out</span>
+          </Button>
         </div>
 
         <div className="flex gap-6">
