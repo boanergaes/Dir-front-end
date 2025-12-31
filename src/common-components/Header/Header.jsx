@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import "./Header.css";
 import { Bell, Menu, Plus } from "lucide-react";
+import { useLocation } from "react-router";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const path = useLocation();
 
   // Handle New Repository button click
   const handleNewRepoClick = () => {
@@ -44,10 +46,12 @@ function Header() {
           {/* Right: Button + Bell + Hamburger */}
           <div className="right-section">
             {/* Your New Repository Button */}
-            <button onClick={handleNewRepoClick} className="new-repo-btn">
-              <Plus />
-              <span>New Repository</span>
-            </button>
+            {path.pathname != "/repository/create" && (
+              <button onClick={handleNewRepoClick} className="new-repo-btn">
+                <Plus />
+                <span>New Repository</span>
+              </button>
+            )}
 
             {/* Bell Icon */}
             <Bell />
