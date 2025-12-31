@@ -7,7 +7,7 @@ export default function Button({
   /*
     variant=base|primary|danger
      */
-  const baseStyle = "py-2 rounded-xl border border-[#EFEEEE21] font-semibold";
+  const baseStyle = "border border-[#EFEEEE21] font-semibold";
   const variants = {
     primary: "bg-[#1F1F56]",
     danger: "bg-[#950606]",

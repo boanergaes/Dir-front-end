@@ -4,9 +4,9 @@ import Dashboard from "./pages/Dashboard/Dashboard/Dashboard";
 import Repositories from "./pages/Repositories/Repositories";
 import Workspace from "./pages/Workspace/Workspace";
 import Repository from "./pages/Repository/Repository";
-import Workspaces from "./pages/Workspaces/Workspaces/Workspaces";
 import Profile from "./pages/Profile/Profile/Profile";
 import CreateRepo from "./pages/CreateRepository/CreateRepo";
+import Workspaces from "./pages/Workspaces/Workspaces";
 
 function App() {
   return (
