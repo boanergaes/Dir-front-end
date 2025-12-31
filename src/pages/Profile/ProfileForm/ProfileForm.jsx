@@ -1,3 +1,4 @@
+import { Plus } from "lucide-react";
 import Button from "../../../common-components/button";
 import Input, { TextArea } from "../../../common-components/input";
 
@@ -33,15 +34,21 @@ export default function ProfileForm() {
           placeholder={"link to social profile one"}
           description={"You can see your github handle here"}
         />
-        <Button className={"px-4 font-normal mt-2 "} variant="base">
-          Add
+        <Button
+          className={
+            " rounded-xl flex gap-2 py-1 px-4 justify-center items-center px-4 font-normal mt-2 "
+          }
+          variant="base"
+        >
+          <Plus size={16} />
+          <span>Add</span>
         </Button>
       </div>
-      <div className="flex gap-2 mt-5">
-        <Button className={"px-16"} variant="primary">
-          Save
+      <div className="flex gap-5 mt-5">
+        <Button className={" rounded-xl py-2 px-16"} variant="primary">
+          Save Changes
         </Button>
-        <Button className={"px-16"} variant="base">
+        <Button className={"rounded-xl py-2 px-16"} variant="base">
           cancel
         </Button>
       </div>

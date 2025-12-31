@@ -12,7 +12,7 @@ export default function Sidebar() {
         />
         <Button
           className={
-            "absolute top-2 right-4 px-4 flex justify-center items-center gap-3"
+            "rounded-md py-2 absolute top-2 right-4 px-4 flex justify-center items-center gap-3"
           }
         >
           <Pencil size={20} />

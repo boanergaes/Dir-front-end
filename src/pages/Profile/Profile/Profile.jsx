@@ -3,10 +3,11 @@ import Header from "../../../common-components/Header/Header";
 import ProfileForm from "../ProfileForm/ProfileForm";
 import Sidebar from "../Sidebar/Sidebar";
 import Button from "../../../common-components/button";
+import Footer from "../../../common-components/Footer/Footer";
 
 export default function Profile() {
   return (
-    <div className="min-h-screen">
+    <>
       <Header />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -14,7 +15,7 @@ export default function Profile() {
           <h1 className="text-lg font-semibold">Public Profile</h1>
           <Button
             variant="outline"
-            className="flex justify-center items-center gap-3 py-3 px-3"
+            className="rounded-2xl flex justify-center items-center gap-3 py-3 px-3"
           >
             <LogOut />
             <span className="text-[#9CA3AF]">Log out</span>
@@ -31,6 +32,7 @@ export default function Profile() {
           </div>
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 }

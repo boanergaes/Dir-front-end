@@ -62,7 +62,7 @@ export default function CreateRepoForm() {
             onStateChange={handleGitIgnore}
             activeState={gitIgnore}
           />
-          <Button className="px-8 my-2" variant="primary">
+          <Button className="rounded-xl px-8 py-2 my-2" variant="primary">
             Create Repository
           </Button>
         </div>
