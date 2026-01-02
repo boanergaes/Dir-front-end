@@ -1,5 +1,5 @@
 import React from 'react';
-import './ActivityFeed.css';
+import { GitCommitHorizontal, GitBranch, MessageSquare } from 'lucide-react';
 
 const ActivityFeed = () => {
   const activities = [
@@ -9,52 +9,41 @@ const ActivityFeed = () => {
     { type: 'commit', user: 'Jane Doe', action: 'committed to/webapp:', message: '"fix: update button styles"' },
   ];
 
-  const renderIcon = (type) => {
-    // Colors moved here to keep data clean
-    const colors = { commit: '#10b981', branch: '#3b82f6', comment: '#f59e0b' };
-    const color = colors[type];
-
-    switch (type) {
-      case 'commit':
-        return (
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke={color} strokeWidth="2">
-            <circle cx="8" cy="8" r="3" />
-            <line x1="0" y1="8" x2="5" y2="8" />
-            <line x1="11" y1="8" x2="16" y2="8" />
-          </svg>
-        );
-      case 'branch':
-        return (
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke={color} strokeWidth="2">
-             <circle cx="4" cy="12" r="2" />
-             <circle cx="12" cy="4" r="2" />
-             <path d="M4 10V6a2 2 0 012-2h4" />
-          </svg>
-        );
-      case 'comment':
-        return (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
-        );
-      default: return null;
-    }
+  // Mapping activities to Lucide components and Tailwind text colors
+  const iconConfig = {
+    commit: { Icon: GitCommitHorizontal, colorClass: 'text-emerald-500' },
+    branch: { Icon: GitBranch, colorClass: 'text-blue-500' },
+    comment: { Icon: MessageSquare, colorClass: 'text-amber-500' },
   };
 
   return (
-    <div className="activity-card-container">
-      <h3 className="card-header-title">Recent Activity</h3>
-      <div className="activity-items-wrapper">
-        {activities.map((item, index) => (
-          <div key={index} className="activity-row">
-            <div className="icon-container">{renderIcon(item.type)}</div>
-            <p className="activity-description">
-              <span className="user-highlight">{item.user}</span> 
-              {item.action} 
-              <span className="message-text">{item.message}</span>
-            </p>
-          </div>
-        ))}
+    <div className="w-full h-full p-6 bg-[#1D1D29] border border-gray-800 rounded-xl box-border">
+      <h3 className="text-xl font-semibold text-white mb-5">
+        Recent Activity
+      </h3>
+      
+      <div className="flex flex-col gap-4">
+        {activities.map((item, index) => {
+          const { Icon, colorClass } = iconConfig[item.type];
+          
+          return (
+            <div key={index} className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-5">
+                <Icon size={16} className={colorClass} strokeWidth={2} />
+              </div>
+              
+              <p className="text-[0.9rem] text-gray-400">
+                <span className="font-semibold text-white">
+                  {item.user}
+                </span> 
+                {' '}{item.action}{' '} 
+                <span className="italic opacity-80 ml-1">
+                  {item.message}
+                </span>
+              </p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

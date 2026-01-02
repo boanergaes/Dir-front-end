@@ -1,5 +1,5 @@
 import React from 'react';
-import './RecentRepositories.css';
+import { ExternalLink, Plus } from 'lucide-react';
 
 const RecentRepositories = () => {
   const repos = [
@@ -8,29 +8,29 @@ const RecentRepositories = () => {
   ];
 
   return (
-    <div className="quick-access-card">
-      <h3 className="quick-access-title">Quick Access</h3>
+    <div className="flex flex-col w-full h-full p-6 bg-[#1D1D29] border border-gray-800 rounded-xl box-border">
+      <h3 className="text-2xl font-semibold text-white mb-6">
+        Quick Access
+      </h3>
       
-      <div className="repo-stack">
+      <div className="flex flex-col gap-5 mb-[30px]">
         {repos.map((repo, index) => (
-          <div key={index} className="repo-row">
+          <div key={index} className="flex justify-between items-center">
             <div className="repo-details">
-              <p className="repo-name">{repo.name}</p>
-              <p className="repo-desc">{repo.description}</p>
+              <p className="text-base font-semibold text-white">{repo.name}</p>
+              <p className="text-[0.85rem] text-gray-400 mt-0.5">{repo.description}</p>
             </div>
-            {/* External link icon matching your design */}
-            <div className="link-icon-wrapper">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <line x1="10" y1="14" x2="21" y2="3"></line>
-              </svg>
+            
+            <div className="text-gray-400 opacity-70 cursor-pointer transition-opacity duration-200 hover:opacity-100">
+              <ExternalLink size={20} strokeWidth={2} />
             </div>
           </div>
         ))}
       </div>
 
-      <button className="create-repo-btn">
+      {/* mt-auto pushes the button to the bottom of the flex container */}
+      <button className="mt-auto w-full flex items-center justify-center p-3 bg-[#242429] hover:bg-[#2a2a32] text-white rounded-lg font-medium transition-colors duration-200 border-none">
+        <Plus size={18} className="mr-2" />
         Create New Repository
       </button>
     </div>
