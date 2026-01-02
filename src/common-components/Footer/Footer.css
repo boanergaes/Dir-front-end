@@ -1,54 +1,56 @@
-/* ===== FOOTER ===== */
 .footer {
-    background-color: #161b22;
-    border-top: 1px solid #30363d;
+    background-color: var(--dark-bg);
+    border-top: 1px solid var(--main-border-color);
     padding: 1.5rem 2rem;
-    margin-top: auto;
+    margin-top: auto; 
 }
 
-.footerContainer {
+.footer-container {
     display: flex;
     justify-content: center; 
     align-items: center; 
     flex-wrap: wrap; 
     gap: 1.5rem; 
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0 auto; 
 }
 
 .container {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #8b949e;
+    color: var(--secondary-text-color);
     font-size: 14px;
 }
 
 .container:first-child {
     font-weight: 600;
-    color: #c9d1d9;
 }
 
-.copyrightIcon {
-    width: 16px;
-    height: 16px;
-    filter: invert(0.7);
+/* Styling the copyright*/
+.container:nth-child(3) svg {
+    color: var(--secondary-text-color);
+    stroke: currentColor;
 }
 
-.link {
-    color: #8b949e;
+.container a {
+    color: var(--secondary-text-color);
     text-decoration: none;
     transition: color 0.2s;
 }
 
-.link:hover {
-    color: #58a6ff;
+.container a:hover {
+    color: var(--active-text-color);
     text-decoration: underline;
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-    .footerContainer {
+    .footer {
+        padding: 1.5rem 1rem;
+    }
+    
+    .footer-container {
         gap: 1rem;
         padding: 0 1rem;
     }
@@ -56,10 +58,15 @@
     .container {
         font-size: 13px;
     }
+    
+    .container:nth-child(3) svg {
+        width: 14px;
+        height: 14px;
+    }
 }
 
 @media (max-width: 480px) {
-    .footerContainer {
+    .footer-container {
         flex-direction: column;
         gap: 0.75rem;
         text-align: center;
