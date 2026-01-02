@@ -1,9 +1,9 @@
 import './App.css'
 import { Routes, Route } from 'react-router'
 import Dashboard from './pages/Dashboard/Dashboard/Dashboard'
-import Repositories from './pages/Repositories/Repositories/Repositories'
+import Repositories from './pages/Repositories/Repositories'
 import Workspace from './pages/Workspace/Workspace'
-import Repository from './pages/Repository/Repository/Repository'
+import Repository from './pages/Repository/Repository'
 import Workspaces from './pages/Workspaces/Workspaces/Workspaces'
 
 function App() {
