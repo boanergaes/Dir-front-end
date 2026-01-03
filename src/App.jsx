@@ -9,7 +9,7 @@ import Workspaces from './pages/Workspaces/Workspaces/Workspaces'
 import Header from "./common-components/Header/Header";
 import Footer from "./common-components/Footer/Footer";
 import CreateRepository from './pages/createRepository/createRepository/CreateRepository';
-
+import Signup from './pages/Auth/Signup/Signup/Signup';
 function App() {
   return (
     <>
@@ -20,6 +20,7 @@ function App() {
         <Route path='/repository' element={<Repository />} />
         <Route path='/workspace' element={<Workspace />} />
         <Route path='/workspaces' element={<Workspaces />} />
+        <Route path='/signup' element={<Signup />} />
       </Routes>
     </>
   )

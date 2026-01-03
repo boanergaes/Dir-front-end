@@ -1,17 +1,29 @@
-import React from 'react';
-import { Chrome } from 'lucide-react'; // Or use specific brand icons
+import React from "react";
 
 const OAuthButtons = () => {
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <button className="flex items-center justify-center gap-2 py-2.5 px-4 bg-[#242429] hover:bg-[#2a2a32] border border-white/5 rounded-lg text-white text-sm font-medium transition-colors">
-        <Chrome size={18} />
-        Google
+  <div className="flex flex-col gap-4 w-full max-w-sm">
+      
+      {/* Sign Up Button */}
+      <button className="flex items-center justify-center gap-2 w-full bg-[#1e1e44] hover:bg-[#2a2a5a] text-white py-3 px-4 rounded-md transition-colors duration-200 font-medium uppercase tracking-wider text-sm">
+        <UserPlus size={18} />
+        <span>Sign Up</span>
       </button>
-      <button className="flex items-center justify-center gap-2 py-2.5 px-4 bg-[#242429] hover:bg-[#2a2a32] border border-white/5 rounded-lg text-white text-sm font-medium transition-colors">
-        <span className="text-lg"></span>
-        Apple
+
+      {/* Continue with GitHub Button */}
+      <button className="flex items-center justify-center gap-2 w-full bg-[#1e1e44] hover:bg-[#2a2a5a] text-white py-3 px-4 rounded-md transition-colors duration-200 font-medium uppercase tracking-wider text-sm">
+        <Github size={18} />
+        <span>Continue with GitHub</span>
       </button>
+
+      {/* Log In Link */}
+      <p className="text-gray-400 text-sm text-center mt-2">
+        Already have an account?{' '}
+        <a href="/login" className="text-white font-bold hover:underline">
+          Log in
+        </a>
+      </p>
+      
     </div>
   );
 };
