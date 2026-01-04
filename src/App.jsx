@@ -5,7 +5,7 @@ import Repositories from './pages/Repositories/Repositories/Repositories'
 import Workspace from './pages/Workspace/Workspace/Workspace'
 import Repository from './pages/Repository/Repository/Repository'
 import Workspaces from './pages/Workspaces/Workspaces/Workspaces'
-import Explore from './pages/Explore/Explore/Explore'
+import Explore from './pages/Explore/ExploreContainer'
 
 function App() {
   return (

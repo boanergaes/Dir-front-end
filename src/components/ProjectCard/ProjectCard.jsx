@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import './ProjectCard.css'
 import languageColors from '../../styles/languageColors'
+import axios from 'axios';
 
 function LanguageBar({languages}){
   // languages: [{name, percent}]
@@ -32,6 +33,7 @@ export default function ProjectCard({project}){
     collaborators = []
   } = project || {}
   const [expanded, setExpanded] = useState(false)
+  const base = 'http://localhost:5000';
 
   return (
     <div className="pc-card" tabIndex={0} aria-label={`${name} project card`}>
@@ -76,6 +78,12 @@ export default function ProjectCard({project}){
           <img key={i} src={c.avatar} alt={c.name || 'collaborator'} className="pc-avatar" role="listitem" />
         ))}
       </div>
+         {console.log('hi there')}
+      { axios.get(`${base}/explore`).then(res=>{
+        console.log('Axios Data', res.data)
+        }).catch(err => console.log(err))
+        }
+       
     </div>
   )
 }
