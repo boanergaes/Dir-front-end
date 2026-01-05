@@ -142,18 +142,20 @@ export const fetchExploreRepos = async (page = 1, query = "", tag = "") => {
 };
 
 export const fetchTopics = async () => {
+  const defaultTags = [
+    { name: "health", label: "Health", color: "#10b981" },
+    { name: "agriculture", label: "Agriculture", color: "#059669" },
+    { name: "javascript", label: "JavaScript", color: languageColors.JavaScript },
+    { name: "web-development", label: "Web Development", color: "#4b5563" },
+    { name: "rust", label: "Rust", color: languageColors.Rust },
+    { name: "python", label: "Python", color: languageColors.Python },
+    { name: "ai", label: "AI", color: "#8b5cf6" },
+    { name: "blockchain", label: "Blockchain", color: "#f59e0b" }
+  ];
+
   return {
     status: "success",
-    data: [
-      { name: "health", label: "Health", color: "#10b981" },
-      { name: "agriculture", label: "Agriculture", color: "#059669" },
-      { name: "javascript", label: "JavaScript", color: languageColors.JavaScript },
-      { name: "web-development", label: "Web Development", color: "#4b5563" },
-      { name: "rust", label: "Rust", color: languageColors.Rust },
-      { name: "python", label: "Python", color: languageColors.Python },
-      { name: "ai", label: "AI", color: "#8b5cf6" },
-      { name: "blockchain", label: "Blockchain", color: "#f59e0b" }
-    ]
+    data: [...defaultTags, ...customTags]
   };
 };
 

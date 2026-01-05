@@ -86,12 +86,14 @@ const TagList = ({ tags, setTags, selectedTag, setSelectedTag }) => {
               />
               {tag.label || tag.name}
               
-              {/* Only show delete on custom tags or on hover */}
-              <X 
-                size={14} 
-                className="ml-1 opacity-0 group-hover:opacity-100 hover:text-red-400 transition" 
-                onClick={(e) => handleDelete(e, tag._id || tagName)}
-              />
+              {/* Only show delete on custom tags */}
+              {tag._id && (
+                <X
+                  size={14}
+                  className="ml-1 opacity-0 group-hover:opacity-100 hover:text-red-400 transition"
+                  onClick={(e) => handleDelete(e, tag._id)}
+                />
+              )}
             </button>
           );
         })}
