@@ -9,7 +9,8 @@ import {
   X 
 } from 'lucide-react'; 
 
-const Sidebar = ({ isOpen, toggleMenu }) => {
+// Added 'user' to the props destructured here
+const Sidebar = ({ isOpen, toggleMenu, user }) => {
   const navItems = [
     { name: 'Dashboard', icon: LayoutDashboard, active: true },
     { name: 'Repositories', icon: Folder },
@@ -18,8 +19,13 @@ const Sidebar = ({ isOpen, toggleMenu }) => {
     { name: 'Settings', icon: Settings },
   ];
 
+  // Helper to get initials if there's no avatar
+  const getInitials = (name) => {
+    if (!name) return "??";
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
   return (
-    /* The outer logic (w-260, transition, transform) is handled by the parent Dashboard container */
     <div className="flex flex-col h-full bg-[#0D0D12] border-r border-white/5 p-[30px_20px]">
       
       {/* Sidebar Header */}
@@ -29,7 +35,6 @@ const Sidebar = ({ isOpen, toggleMenu }) => {
           <h1 className="text-[25px] font-black text-white">Dir</h1>
         </div>
         
-        {/* Mobile-only Close Button */}
         <button 
           className="lg:hidden text-gray-400 hover:text-white" 
           onClick={toggleMenu}
@@ -38,14 +43,27 @@ const Sidebar = ({ isOpen, toggleMenu }) => {
         </button>
       </div>
 
-      {/* Sidebar User Section */}
+      {/* DYNAMIC User Section */}
       <div className="flex items-center gap-3 mb-[30px] mt-4">
-        <div className="w-9 h-9 bg-[#2D2D3A] rounded-full flex items-center justify-center text-[#9CA3AF] shrink-0 text-sm">
-          ZM
-        </div>
-        <div className="flex flex-col">
-          <p className="text-[0.9rem] font-medium text-white leading-none">Zeamanuel Mebit</p>
-          <p className="text-[0.75rem] text-gray-400 mt-1">@zeaman</p>
+        {user?.avatarUrl ? (
+          <img 
+            src={user.avatarUrl} 
+            alt="Profile" 
+            className="w-9 h-9 rounded-full object-cover shrink-0 border border-white/10"
+          />
+        ) : (
+          <div className="w-9 h-9 bg-[#2D2D3A] rounded-full flex items-center justify-center text-[#9CA3AF] shrink-0 text-sm font-bold">
+            {getInitials(user?.githubUsername || "User")}
+          </div>
+        )}
+        
+        <div className="flex flex-col min-w-0">
+          <p className="text-[0.9rem] font-medium text-white leading-none truncate">
+            {user?.githubUsername || "Loading..."}
+          </p>
+          <p className="text-[0.75rem] text-gray-400 mt-1 truncate">
+            @{user?.githubUsername?.toLowerCase().replace(/\s/g, '') || "username"}
+          </p>
         </div>
       </div>
 

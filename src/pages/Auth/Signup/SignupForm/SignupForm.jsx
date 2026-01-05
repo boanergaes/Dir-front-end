@@ -1,5 +1,4 @@
 import React from "react";
-import PasswordStrength from "../PasswordStrength/PasswordStrength";
 
 const SignupForm = () => {
   return (
@@ -22,11 +21,8 @@ const SignupForm = () => {
         />
       </div>
 
-      <PasswordStrength />
+      
 
-      <button className="w-full bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-indigo-500/20 mt-4">
-        Create Account
-      </button>
     </form>
   );
 };

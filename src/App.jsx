@@ -13,17 +13,19 @@ import Signup from './pages/Auth/Signup/Signup/Signup';
 function App() {
   return (
     <>
-      {/* This is temporary routing to let everyone see the page they are building */}
       <Routes>
-        <Route path='/' element={<Dashboard />}/> 
+        {/* Change home to Signup so you can click "Login with GitHub" */}
+        <Route path='/' element={<Signup />}/> 
+        <Route path='/signup' element={<Signup />} />
+        <Route path='/dashboard' element={<Dashboard />}/> 
+        
+        {/* Rest of your routes */}
         <Route path='/repositories' element={<Repositories />} />
         <Route path='/repository' element={<Repository />} />
         <Route path='/workspace' element={<Workspace />} />
         <Route path='/workspaces' element={<Workspaces />} />
-        <Route path='/signup' element={<Signup />} />
       </Routes>
     </>
   )
 }
-
 export default App;
