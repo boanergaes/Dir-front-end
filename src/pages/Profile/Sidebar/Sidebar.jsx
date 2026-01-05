@@ -20,26 +20,32 @@ export default function Sidebar() {
         </Button>
       </div>
       <div>
-        <h3 className="font-semibold text-2xl">Preferences</h3>
-        <hr className="bg-gray-500 my-2 max-w-xs" />
+        <h3 className="font-semibold text-2xl text-(--primary-text-color)">
+          Preferences
+        </h3>
+        <hr className="border border-(--main-border-color) my-2 max-w-xs" />
         <div>
-          <p className="font-semibold text-xl my-2">Notification</p>
-          <div className="flex gap-1 items-center mb-1.5">
+          <p className="font-semibold text-xl my-2 text-(--primary-text-color)">
+            Notification
+          </p>
+          <div className="flex gap-1 items-center mb-1.5 text-(--secondary-text-color)">
             <input type="radio" name="notification" id="notOn" value={"on"} />
             <label htmlFor="notOn">On</label>
           </div>
-          <div className="flex gap-1 items-center mb-1.5">
+          <div className="flex gap-1 items-center mb-1.5 text-(--secondary-text-color)">
             <input type="radio" name="notification" id="notOff" value={"off"} />
             <label htmlFor="notOff">Off</label>
           </div>
         </div>
         <div>
-          <p className="font-semibold text-xl my-2">Theme</p>
-          <div className="flex gap-1 items-center mb-1.5">
+          <p className="font-semibold text-xl my-2 text-(--primary-text-color)">
+            Theme
+          </p>
+          <div className="flex gap-1 items-center mb-1.5 text-(--secondary-text-color)">
             <input type="radio" name="theme" id="light" value={"light"} />
             <label htmlFor="light">light mode</label>
           </div>
-          <div className="flex gap-1 items-center mb-1.5">
+          <div className="flex gap-1 items-center mb-1.5 text-(--secondary-text-color)">
             <input type="radio" name="theme" id="night" value={"night"} />
             <label htmlFor="night">night mode</label>
           </div>

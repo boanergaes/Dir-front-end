@@ -50,7 +50,7 @@ export default function WorkSpaceList() {
             <input
               type="text"
               placeholder="Search for repositories..."
-              className="flex-1 bg-[#303036] border border-[#EFEEEE21] pl-12 py-2.5 rounded-l-xl"
+              className="flex-1 bg-(--secondary-button-hover) border border-(--main-border-color) pl-12 py-2.5 rounded-l-xl"
             />
           </div>
 
@@ -70,9 +70,10 @@ export default function WorkSpaceList() {
         </div>
       </div>
 
-      <div className="rounded-xl bg-[#1A1A1E] my-4 flex flex-col items-center justify-center border border-white/10">
-        {MockData.map((project) => (
+      <div className="rounded-xl bg-(--dimmer-dark-bg) my-4 flex flex-col items-center justify-center border border-(--main-border-color)">
+        {MockData.map((project, index) => (
           <WorkSpacesSlot
+            key={index}
             projectName={project.projectName}
             visibility={project.visibility}
             description={project.description}

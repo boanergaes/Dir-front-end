@@ -31,12 +31,12 @@ export default function CreateRepoForm() {
   };
 
   return (
-    <div className="flex flex-col rounded-2xl px-16 py-8 gap-3 shadow-gray-800 shadow-md bg-[#1D1D2933] justify-center items-center border border-gray-500">
+    <div className="flex flex-col rounded-2xl px-16 py-8 gap-3 shadow-gray-800 shadow-md bg-(--card-bg) justify-center items-center border border-(--main-border-color)">
       <div className="w-fit flex flex-col items-center ">
         <h1 className="font-semibold my-2.5 text-xl">Create New Repository</h1>
       </div>
       <div className="w-fit">
-        <hr className=" w-full  border-gray-500 mt-4 mb-8" />
+        <hr className=" w-full border-(--main-border-color) mt-4 mb-8" />
         <Input label={"Repository Name"} placeholder={"My Repository..."} />
         <TextArea label={"Description"} placeholder={"the repo is.."} />
 
