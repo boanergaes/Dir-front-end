@@ -136,7 +136,7 @@ export const fetchExploreRepos = async (page = 1, query = "", tag = "") => { // 
   // for "all" or empty, show all
 
   const startIndex = (page - 1) * 2;
-  const endIndex = startIndex + 2;
+  const endIndex = startIndex + 3;
   const repos = baseRepos.slice(startIndex, endIndex);
 
   return {
