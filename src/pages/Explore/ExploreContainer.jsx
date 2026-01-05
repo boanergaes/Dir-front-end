@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Header from "../../common-components/Header/Header";
 import Footer from "../../common-components/Footer/Footer";
 import ExploreHero from "./components/ExploreHero";
@@ -11,33 +11,39 @@ const ExploreContainer = () => {
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [hasNextPage, setHasNextPage] = useState(true); // Track if more data exists
+  const [filter, setFilter] = useState("all"); // 'all', 'repository', or 'workspace'
+  const [hasNextPage, setHasNextPage] = useState(true);
 
-  useEffect(() => {
-    const initLoad = async () => {
-      setLoading(true);
-      const [repoRes, tagRes] = await Promise.all([fetchExploreRepos(1), fetchTopics()]);
-      setRepos(repoRes.data.repos);
-      setTags(tagRes.data);
-      setHasNextPage(repoRes.data.hasNextPage); // Set initial button visibility
-      setLoading(false);
-    };
-    initLoad();
+  // Fetch data function
+  const loadData = useCallback(async (pageNum, currentFilter, append = false) => {
+    setLoading(true);
+    const res = await fetchExploreRepos(pageNum, currentFilter);
+    
+    if (append) {
+      setRepos(prev => [...prev, ...res.data.repos]);
+    } else {
+      setRepos(res.data.repos);
+    }
+    
+    setHasNextPage(res.data.hasNextPage);
+    setLoading(false);
   }, []);
 
-  const handleLoadMore = async () => {
-    // Prevent multiple clicks while loading
-    if (loading || !hasNextPage) return;
+  // Initial Load & Filter Changes
+  useEffect(() => {
+    const init = async () => {
+      const tagRes = await fetchTopics();
+      setTags(tagRes.data);
+      loadData(1, filter, false);
+      setPage(1);
+    };
+    init();
+  }, [filter, loadData]);
 
-    setLoading(true); 
+  const handleLoadMore = () => {
     const nextPage = page + 1;
-    const res = await fetchExploreRepos(nextPage);
-    
-    // IMPORTANT: Append new repos to the existing array
-    setRepos((prev) => [...prev, ...res.data.repos]);
+    loadData(nextPage, filter, true);
     setPage(nextPage);
-    setHasNextPage(res.data.hasNextPage); // Update button visibility based on backend
-    setLoading(false);
   };
 
   return (
@@ -47,15 +53,14 @@ const ExploreContainer = () => {
         <div className="max-w-7xl mx-auto">
           <div className="mb-6"><ExploreHero /></div>
           <div className="mb-10"><TagList tags={tags} setTags={setTags} /></div>
-          <div>
-            <ProjectGrid 
-              repos={repos} 
-              onLoadMore={handleLoadMore} 
-              isLoading={loading}
-              // Pass a boolean to hide/show the Load More button in the UI
-              showButton={hasNextPage} 
-            />
-          </div>
+          <ProjectGrid 
+            repos={repos} 
+            onLoadMore={handleLoadMore} 
+            isLoading={loading}
+            showButton={hasNextPage}
+            activeFilter={filter}
+            onFilterChange={setFilter}
+          />
         </div>
       </div>
       <Footer />

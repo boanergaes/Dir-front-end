@@ -3,7 +3,7 @@ export const fetchExploreRepos = async (page = 1, query = "", tag = "") => { // 
   // Simulate a slight network delay
   await new Promise(resolve => setTimeout(resolve, 500));
 
-  const baseRepos = [
+  let baseRepos = [
     // PAGE 1
     {
       githubId: "1",
@@ -69,6 +69,7 @@ export const fetchExploreRepos = async (page = 1, query = "", tag = "") => { // 
       githubId: "5",
       name: "Agri-Tech",
       owner: "GreenThumb",
+      isWorkspace: true,
       avatar: "https://avatars.githubusercontent.com/u/5",
       description: "Smart monitoring for agricultural soil and crops.",
       stars: 95,
@@ -83,6 +84,7 @@ export const fetchExploreRepos = async (page = 1, query = "", tag = "") => { // 
       githubId: "6",
       name: "Health-Sync",
       owner: "VitalSigns",
+      isWorkspace: false,
       avatar: "https://avatars.githubusercontent.com/u/6",
       description: "Real-time health tracking and data synchronization.",
       stars: 310,
@@ -97,6 +99,7 @@ export const fetchExploreRepos = async (page = 1, query = "", tag = "") => { // 
       githubId: "7",
       name: "Cloud-Native-Ops",
       owner: "DevOpsPro",
+      isWorkspace: true,
       avatar: "https://avatars.githubusercontent.com/u/7",
       description: "Kubernetes orchestration and monitoring tools.",
       stars: 520,
@@ -111,6 +114,7 @@ export const fetchExploreRepos = async (page = 1, query = "", tag = "") => { // 
       githubId: "8",
       name: "Ethio-Fintech",
       owner: "AbyssiniaDev",
+      isWorkspace: true,
       avatar: "https://avatars.githubusercontent.com/u/8",
       description: "Local payment gateway integration for Ethiopia.",
       stars: 180,
@@ -122,6 +126,14 @@ export const fetchExploreRepos = async (page = 1, query = "", tag = "") => { // 
       visibility: "public"
     }
   ];
+
+  // Filter based on query
+  if (query === "repository") {
+    baseRepos = baseRepos.filter(repo => !repo.isWorkspace);
+  } else if (query === "workspace") {
+    baseRepos = baseRepos.filter(repo => repo.isWorkspace);
+  }
+  // for "all" or empty, show all
 
   const startIndex = (page - 1) * 2;
   const endIndex = startIndex + 2;
