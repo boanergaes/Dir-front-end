@@ -13,7 +13,7 @@ function RepositoryList() {
     );
     
     return (
-        <div className="min-h-screen bg-gray-50 p-6">
+        <div className="min-h-screen bg-(--dark) p-6">
 
             {/* USER PROFILE HEADER - Shows avatar, name, and statistics */}
             <header className="mb-8">
