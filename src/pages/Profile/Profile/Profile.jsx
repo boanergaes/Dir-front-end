@@ -18,7 +18,7 @@ export default function Profile() {
             className="rounded-2xl flex justify-center items-center gap-3 py-3 px-3"
           >
             <LogOut />
-            <span className="text-[#9CA3AF]">Log out</span>
+            <span className="text-(--secondary-text-color)">Log out</span>
           </Button>
         </div>
 

@@ -9,7 +9,7 @@ export default function () {
       <Header />
       <div className="max-w-5xl mx-auto px-6">
         <WorkSpacesHeader />
-        <hr className="border-gray-500 my-8" />
+        <hr className="border-(--main-border-color) my-8" />
         <WorkSpaceList />
       </div>
       <Footer />
