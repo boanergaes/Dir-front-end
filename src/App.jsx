@@ -1,4 +1,4 @@
-import "./App.css";
+﻿import "./App.css";
 import { Routes, Route } from "react-router";
 import Dashboard from "./pages/Dashboard/components/Dashboard";
 import Repositories from "./pages/Repositories/Repositories";
@@ -8,6 +8,8 @@ import Profile from "./pages/Profile/Profile/Profile";
 import CreateRepo from "./pages/CreateRepository/CreateRepo";
 import Workspaces from "./pages/Workspaces/Workspaces";
 import ExploreContainer from "./pages/Explore/ExploreContainer";
+import CreateWorkspace from "./pages/CreateWorkspace/CreateWorkspace/CreateWorkspace"
+
 
 function App() {
   return (
@@ -22,7 +24,9 @@ function App() {
         <Route path="/workspaces" element={<Workspaces />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/explore" element={<ExploreContainer />} />
+        <Route path="/createWorkspace" element={<CreateWorkspace />} />
       </Routes>
+  
       
     </>
   );

@@ -60,7 +60,7 @@ const CreateWorkspace = () => {
 
   return (
     <div className="min-h-screen flex justify-center items-center p-5">
-      <div className="bg-[var(--dimmer-dark-bg)] py-8 px-12 rounded-xl w-full max-w-[600px] flex flex-col gap-6 shadow-lg border border-[var(--main-border-color)]">
+      <div className="bg-[var(--dimmer-dark-bg)] py-8 px-12 rounded-xl w-full max-w-[600px] flex flex-col gap-6 shadow-lg border border-[var(--main-border-color)] scale-90">
         <h1 className="text-1.4rem text-center mb-0.5">Create New Workspace</h1>
         <hr className="w-4/5 mx-auto mb-6 border border-[var(--main-border-color)]" />
         
@@ -127,11 +127,11 @@ const CreateWorkspace = () => {
       {/* Invite Collaborators Modal */}
       {isModalOpen && (
         <div 
-          className="fixed inset-0 bg-black/70 flex justify-center items-center z-[1000] backdrop-blur-sm animate-[fadeIn_0.3s_ease]"
+          className="fixed inset-0 bg-black/70 flex justify-center items-center z-[1000] backdrop-blur-sm animate-[fadeIn_0.3s_ease] "
           onClick={handleCloseModal}
         >
           <div 
-            className="bg-[var(--dimmer-dark-bg)] rounded-xl w-full max-w-[480px] overflow-hidden border border-[var(--main-border-color)] animate-[slideUp_0.3s_ease] shadow-lg"
+            className="bg-[var(--dimmer-dark-bg)] rounded-xl w-full max-w-[480px] overflow-hidden border border-[var(--main-border-color)] animate-[slideUp_0.3s_ease] shadow-lg "
             onClick={(e) => e.stopPropagation()}
           >
             <div className="py-6 px-6 text-center">
@@ -156,9 +156,7 @@ const CreateWorkspace = () => {
               
               <div className="flex flex-col">
                 <h3 className="text-base text-[var(--primary-text-color)] mb-3">Role</h3>
-                {/* Only HR line after Role title */}
-                <hr className="border-none border-t border-[var(--main-border-color)] mb-4" />
-                {/* Removed gap between radio buttons */}
+                <hr className="border-t border-[var(--main-border-color)] mb-4" />
                 <div className="flex flex-row">
                   <label className="flex items-center gap-3 py-3 px-4 rounded-lg cursor-pointer transition-all duration-200">
                     <input 
@@ -211,7 +209,7 @@ const CreateWorkspace = () => {
                 </div>
               </div>
 
-              {/* Both buttons with primary-button color and hover */}
+              {/* buttons*/}
               <div className="flex flex-row gap-3 mt-4">
                 <button 
                   className="flex-1 py-3.5 bg-[var(--primary-button)] text-[var(--primary-text-color)] border-none rounded-lg cursor-pointer font-semibold text-[0.95rem] font-[var(--main-font-family)] hover:bg-[var(--primary-button-hover)]"
@@ -233,7 +231,7 @@ const CreateWorkspace = () => {
         </div>
       )}
 
-      {/* Add these styles for animations */}
+      {/* styles for animations */}
       <style jsx>{`
         @keyframes fadeIn {
           from { opacity: 0; }
