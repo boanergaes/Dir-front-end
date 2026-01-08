@@ -11,116 +11,217 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isCreateRepoOpen, setIsCreateRepoOpen] = useState(false);
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: 'message',
-      label: 'Message',
-      time: '2hrs ago',
-      channel: '#Front-end team',
-      userImg: '/assets/images/person.jpg',
-      userName: 'Efrata',
-      shortMessage: 'Efrata: Have you finished designing...',
-      fullMessage: 'Efrata: Have you finished designing the header component for the repository page? We need it by tomorrow for the upcoming sprint review. Could you also add the dark mode toggle functionality?',
-      hasMore: true
-    },
-    {
-      id: 2,
-      type: 'github',
-      label: 'GitHub',
-      time: '2hrs ago',
-      repo: 'My-repository',
-      user: 'Abrsh123',
-      shortPR: 'I implemented the file browsing features...',
-      fullPR: 'I implemented the file browsing features with drag-and-drop support and improved the UI for better user experience. Added file type icons, keyboard shortcuts, and bulk selection capabilities. Also optimized the performance for handling large repositories.',
-      hasMore: true
-    },
-    {
-      id: 3,
-      type: 'alert',
-      label: 'Alert',
-      time: '2hrs ago',
-      repo: 'My-repository',
-      shortAlert: 'Someone logged in with your GitHub account on device...',
-      fullAlert: 'Someone logged in with your GitHub account from a new device in London, UK. If this wasn\'t you, please secure your account immediately. Check your account activity and consider changing your password and enabling two-factor authentication.',
-      hasMore: true
-    }
-  ]);
+  
+  const [userData, setUserData] = useState(null);
+  const [userStats, setUserStats] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [apiNotifications, setApiNotifications] = useState([]);
   
   const [pastNotifications, setPastNotifications] = useState([]);
   const [expandedMessages, setExpandedMessages] = useState({});
   const [isLoadingPast, setIsLoadingPast] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   const notificationPanelRef = useRef(null);
   const bellBtnRef = useRef(null);
 
-  const handleNewRepoClick = () => {
-    setIsCreateRepoOpen(true);
+  useEffect(() => {
+    fetchUserData();
+    fetchUserStats();
+    fetchNotifications();
+  }, []);
+  
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/me', {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (data.status === 'success') {
+        setUserData(data.data);
+      }
+    } catch (error) {
+      console.log('User data fetch failed:', error.message);
+    }
   };
 
-  const handleCloseCreateRepo = () => {
-    setIsCreateRepoOpen(false);
+  const fetchUserStats = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/stats', {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (data.status === 'success') {
+        setUserStats(data.data);
+      }
+    } catch (error) {
+      console.log('Stats fetch failed:', error.message);
+    }
   };
 
-  const toggleNotificationPanel = (e) => {
-    if (e) e.stopPropagation();
-    setIsNotificationOpen(!isNotificationOpen);
+  const fetchNotifications = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/notifications', {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      
+      if (data.status === 'success' && data.data) {
+        const transformed = data.data.map((notif, index) => ({
+          id: notif._id || `api-${index}`,
+          type: notif.type || 'message',
+          label: notif.type === 'github' ? 'GitHub' : 
+                 notif.type === 'alert' ? 'Alert' : 'Message',
+          time: formatTimeAgo(notif.createdAt),
+          read: notif.isRead || false,
+          channel: extractChannelFromMessage(notif.message) || '#general',
+          userImg: '/assets/images/person.jpg',
+          userName: 'User',
+          shortMessage: notif.message?.substring(0, 50) + '...' || 'New notification',
+          fullMessage: notif.message || 'No details available',
+          hasMore: notif.message?.length > 50 || false,
+          isApiNotification: true
+        }));
+        setApiNotifications(transformed);
+      }
+    } catch (error) {
+      console.log('Notifications fetch failed:', error.message);
+      setMockNotifications();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const closeNotificationPanel = () => {
-    setIsNotificationOpen(false);
+  const setMockNotifications = () => {
+    const mock = [
+      {
+        id: 1,
+        type: 'message',
+        label: 'Message',
+        time: '2hrs ago',
+        channel: '#Front-end team',
+        userImg: '/assets/images/person.jpg',
+        userName: 'Efrata',
+        shortMessage: 'Efrata: Have you finished designing...',
+        fullMessage: 'Efrata: Have you finished designing the header component...',
+        hasMore: true,
+        read: false,
+        isApiNotification: false
+      },
+      {
+        id: 2,
+        type: 'github',
+        label: 'GitHub',
+        time: '2hrs ago',
+        repo: 'My-repository',
+        user: 'Abrsh123',
+        shortPR: 'I implemented the file browsing features...',
+        fullPR: 'I implemented the file browsing features with drag-and-drop...',
+        hasMore: true,
+        read: false,
+        isApiNotification: false
+      },
+      {
+        id: 3,
+        type: 'alert',
+        label: 'Alert',
+        time: '2hrs ago',
+        repo: 'My-repository',
+        shortAlert: 'Someone logged in with your GitHub account...',
+        fullAlert: 'Someone logged in with your GitHub account from a new device...',
+        hasMore: true,
+        read: false,
+        isApiNotification: false
+      }
+    ];
+    setApiNotifications(mock);
   };
 
-  const handleMarkAllAsRead = () => {
-    const updatedNotifications = notifications.map(notification => ({
+  const extractChannelFromMessage = (message) => {
+    if (!message) return '#general';
+    if (message.includes('channel')) {
+      const match = message.match(/channel\s+([^\s]+)/i);
+      return match ? `#${match[1]}` : '#general';
+    }
+    return '#general';
+  };
+
+  const formatTimeAgo = (dateString) => {
+    if (!dateString) return 'Recently';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffHours = Math.floor((now - date) / (1000 * 60 * 60));
+    if (diffHours < 1) return 'Just now';
+    if (diffHours < 24) return `${diffHours}hrs ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays} days ago`;
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (data.status === 'success') {
+        window.location.href = '/';
+      }
+    } catch (error) {
+      console.log('Logout failed:', error.message);
+      window.location.href = '/';
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    const updatedNotifications = [...notifications];
+    const apiNotifs = updatedNotifications.filter(n => n.isApiNotification);
+    const mockNotifs = updatedNotifications.filter(n => !n.isApiNotification);
+    
+    const updatedMock = mockNotifs.map(notification => ({
       ...notification,
       read: true
     }));
-    setNotifications(updatedNotifications);
+    
+    setNotifications([...apiNotifs, ...updatedMock]);
+    
+    if (apiNotifs.length > 0) {
+      try {
+        await Promise.all(apiNotifs.map(async (notif) => {
+          if (!notif.read) {
+            await fetch(`http://localhost:5000/api/notifications/${notif.id}/read`, {
+              method: 'PATCH',
+              credentials: 'include'
+            });
+          }
+        }));
+      } catch (error) {
+        console.log('Mark as read failed:', error.message);
+      }
+    }
   };
 
-  const handleCloseNotification = (id) => {
+  const handleCloseNotification = async (id) => {
+    const notificationToRemove = notifications.find(n => n.id === id);
+    
+    if (notificationToRemove?.isApiNotification) {
+      try {
+        await fetch(`http://localhost:5000/api/notifications/${id}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+      } catch (error) {
+        console.log('Delete notification failed:', error.message);
+      }
+    }
+    
     setNotifications(prev => prev.filter(notification => notification.id !== id));
   };
 
-  const handleLoadPastNotifications = () => {
-    setIsLoadingPast(true);
+  const handleActionButton = async (action, notificationId) => {
+    const notification = notifications.find(n => n.id === notificationId);
     
-    setTimeout(() => {
-      const newPastNotifications = [
-        {
-          id: Date.now() + 1,
-          type: 'message',
-          label: 'Message',
-          time: 'Yesterday',
-          channel: '#Design-team',
-          userImg: '/assets/images/person.jpg',
-          userName: 'Sarah',
-          shortMessage: 'Sarah: Can you review the new UI mockups...',
-          fullMessage: 'Sarah: Can you review the new UI mockups for the dashboard? I\'ve uploaded them to Figma. Let me know if you have any feedback on the color scheme and layout.',
-          hasMore: true,
-          past: true
-        },
-        {
-          id: Date.now() + 2,
-          type: 'github',
-          label: 'GitHub',
-          time: '1 day ago',
-          repo: 'Design-system',
-          user: 'DesignLead',
-          shortPR: 'Added new color variables and typography...',
-          fullPR: 'Added new color variables and typography scale to the design system. This includes new tokens for spacing, shadows, and component-specific styling improvements.',
-          hasMore: true,
-          past: true
-        }
-      ];
-      
-      setPastNotifications(prev => [...newPastNotifications, ...prev]);
-      setIsLoadingPast(false);
-    }, 1200);
-  };
-
-  const handleActionButton = (action, notificationId) => {
     switch(action.toLowerCase()) {
       case 'reply':
         break;
@@ -132,6 +233,17 @@ function Header() {
               : notification
           )
         );
+        
+        if (notification?.isApiNotification) {
+          try {
+            await fetch(`http://localhost:5000/api/notifications/${notificationId}/read`, {
+              method: 'PATCH',
+              credentials: 'include'
+            });
+          } catch (error) {
+            console.log('Mark as read API failed:', error.message);
+          }
+        }
         break;
       case 'review':
         break;
@@ -147,11 +259,16 @@ function Header() {
     }
   };
 
-  const toggleMessageExpansion = (notificationId) => {
-    setExpandedMessages(prev => ({
-      ...prev,
-      [notificationId]: !prev[notificationId]
-    }));
+  const toggleNotificationPanel = (e) => {
+    if (e) e.stopPropagation();
+    setIsNotificationOpen(!isNotificationOpen);
+    if (!isNotificationOpen) {
+      setNotifications([...apiNotifications]);
+    }
+  };
+
+  const closeNotificationPanel = () => {
+    setIsNotificationOpen(false);
   };
 
   useEffect(() => {
@@ -187,6 +304,50 @@ function Header() {
       document.removeEventListener('keydown', handleEscapeKey);
     };
   }, [isNotificationOpen, isCreateRepoOpen]);
+
+  const handleNewRepoClick = () => {
+    setIsCreateRepoOpen(true);
+  };
+
+  const handleCloseCreateRepo = () => {
+    setIsCreateRepoOpen(false);
+  };
+
+  const handleLoadPastNotifications = () => {
+    setIsLoadingPast(true);
+    
+    setTimeout(() => {
+      const newPastNotifications = [
+        {
+          id: Date.now() + 1,
+          type: 'message',
+          label: 'Message',
+          time: 'Yesterday',
+          channel: '#Design-team',
+          userImg: '/assets/images/person.jpg',
+          userName: 'Sarah',
+          shortMessage: 'Sarah: Can you review the new UI mockups...',
+          fullMessage: 'Sarah: Can you review the new UI mockups for the dashboard...',
+          hasMore: true,
+          past: true,
+          isApiNotification: false
+        }
+      ];
+      
+      setPastNotifications(prev => [...newPastNotifications, ...prev]);
+      setIsLoadingPast(false);
+    }, 1200);
+  };
+
+  const toggleMessageExpansion = (notificationId) => {
+    setExpandedMessages(prev => ({
+      ...prev,
+      [notificationId]: !prev[notificationId]
+    }));
+  };
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+  const displayCount = userStats?.unreadNotifications || unreadCount || 0;
 
   return (
     <>
@@ -239,12 +400,12 @@ function Header() {
                 }}
               >
                 <Bell size={24} />
-                {notifications.length > 0 && (
+                {displayCount > 0 && (
                   <span 
                     className="absolute -top-1 -right-1 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
                     style={{ backgroundColor: 'var(--notification-count-bg)' }}
                   >
-                    {notifications.length}
+                    {displayCount}
                   </span>
                 )}
               </button>
@@ -289,6 +450,8 @@ function Header() {
       <SidebarMenu
         isMenuOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
+        userData={userData}
+        onLogout={handleLogout}
       />
 
       {isCreateRepoOpen && (

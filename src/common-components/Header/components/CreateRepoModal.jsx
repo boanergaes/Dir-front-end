@@ -7,26 +7,55 @@ function CreateRepoModal({ onClose }) {
   const [visibility, setVisibility] = useState('private');
   const [readme, setReadme] = useState('no');
   const [gitignore, setGitignore] = useState('no');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleCreateRepository = (e) => {
+  const handleCreateRepository = async (e) => {
     if (e) e.preventDefault();
     
     if (!repoName.trim()) {
-      alert("Please enter a repository name");
+      setError("Please enter a repository name");
       return;
     }
     
-    console.log('Creating repository:', {
-      name: repoName,
-      description,
-      visibility,
-      readme,
-      gitignore
-    });
+    setIsLoading(true);
+    setError('');
     
-    alert(`Repository "${repoName}" created successfully!`);
-    
-    handleClose();
+    try {
+      const requestData = {
+        name: repoName,
+        description: description,
+        isPrivate: visibility === 'private' ? 'private' : 'public',
+        auto_init: readme === 'yes' ? 'Yes' : 'No',
+        gitignore_template: gitignore === 'yes' ? 'Node' : null
+      };
+      
+      const response = await fetch('http://localhost:5000/api/repos/create-remote', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(requestData)
+      });
+      
+      const data = await response.json();
+      
+      if (data.status === 'success') {
+        alert(`Repository "${repoName}" created successfully!`);
+        handleClose();
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      } else {
+        setError(data.message || 'Failed to create repository');
+      }
+    } catch (error) {
+      console.error('Error creating repository:', error);
+      setError('Error creating repository. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleClose = () => {
@@ -35,6 +64,8 @@ function CreateRepoModal({ onClose }) {
     setVisibility('private');
     setReadme('no');
     setGitignore('no');
+    setError('');
+    setIsLoading(false);
     onClose();
   };
 
@@ -81,12 +112,19 @@ function CreateRepoModal({ onClose }) {
             className="p-1 rounded w-6 flex items-center justify-center"
             style={{ color: 'var(--secondary-text-color)' }}
             onClick={handleClose}
+            disabled={isLoading}
           >
             <X size={20} />
           </button>
         </div>
 
         <div className="p-6">
+          {error && (
+            <div className="mb-4 p-3 rounded-md text-sm" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
+              {error}
+            </div>
+          )}
+          
           <form onSubmit={handleCreateRepository}>
             <div className="mb-6">
               <label className="block text-sm font-medium mb-2" style={{ color: 'var(--primary-text-color)' }}>
@@ -96,9 +134,13 @@ function CreateRepoModal({ onClose }) {
                 type="text" 
                 placeholder="My repository..." 
                 value={repoName}
-                onChange={(e) => setRepoName(e.target.value)}
+                onChange={(e) => {
+                  setRepoName(e.target.value);
+                  setError('');
+                }}
                 required
-                className="w-full px-3 py-2 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--active-text-color)] focus:border-transparent"
+                disabled={isLoading}
+                className="w-full px-3 py-2 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--active-text-color)] focus:border-transparent disabled:opacity-50"
                 style={{
                   backgroundColor: '#303036',
                   border: '1px solid var(--main-border-color)'
@@ -115,7 +157,8 @@ function CreateRepoModal({ onClose }) {
                 placeholder="The repo is..." 
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-3 py-2 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--active-text-color)] focus:border-transparent"
+                disabled={isLoading}
+                className="w-full px-3 py-2 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[var(--active-text-color)] focus:border-transparent disabled:opacity-50"
                 style={{
                   backgroundColor: '#303036',
                   border: '1px solid var(--main-border-color)'
@@ -131,17 +174,19 @@ function CreateRepoModal({ onClose }) {
                 <div className="flex gap-1">
                   <button 
                     type="button"
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors w-20 mr-8 ${visibility === 'public' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                    disabled={isLoading}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors w-20 mr-8 ${visibility === 'public' ? 'text-white' : 'text-gray-400 hover:text-white'} disabled:opacity-50 disabled:cursor-not-allowed`}
                     style={{
-  backgroundColor: visibility === 'public' ? '#1D1D29' : 'var(--secondary-button)',
-}}
+                      backgroundColor: visibility === 'public' ? '#1D1D29' : 'var(--secondary-button)',
+                    }}
                     onClick={() => handleOptionChange('visibility', 'public')}
                   >
                     Public
                   </button>
                   <button 
                     type="button"
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors w-20 mr-8 ${visibility === 'private' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                    disabled={isLoading}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors w-20 mr-8 ${visibility === 'private' ? 'text-white' : 'text-gray-400 hover:text-white'} disabled:opacity-50 disabled:cursor-not-allowed`}
                     style={{
                       backgroundColor: visibility === 'private' ? '#1D1D29' : 'var(--secondary-button)',
                     }}
@@ -159,7 +204,8 @@ function CreateRepoModal({ onClose }) {
                 <div className="flex gap-1">
                   <button 
                     type="button"
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors w-20 mr-8 ${readme === 'yes' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                    disabled={isLoading}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors w-20 mr-8 ${readme === 'yes' ? 'text-white' : 'text-gray-400 hover:text-white'} disabled:opacity-50 disabled:cursor-not-allowed`}
                     style={{
                       backgroundColor: readme === 'yes' ? '#1D1D29' : 'var(--secondary-button)',
                     }}
@@ -169,7 +215,8 @@ function CreateRepoModal({ onClose }) {
                   </button>
                   <button 
                     type="button"
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors w-20 mr-8 ${readme === 'no' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                    disabled={isLoading}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors w-20 mr-8 ${readme === 'no' ? 'text-white' : 'text-gray-400 hover:text-white'} disabled:opacity-50 disabled:cursor-not-allowed`}
                     style={{
                       backgroundColor: readme === 'no' ? '#1D1D29' : 'var(--secondary-button)',
                     }}
@@ -187,7 +234,8 @@ function CreateRepoModal({ onClose }) {
                 <div className="flex gap-1">
                   <button 
                     type="button"
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors w-20 mr-8 ${gitignore === 'yes' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                    disabled={isLoading}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors w-20 mr-8 ${gitignore === 'yes' ? 'text-white' : 'text-gray-400 hover:text-white'} disabled:opacity-50 disabled:cursor-not-allowed`}
                     style={{
                       backgroundColor: gitignore === 'yes' ? '#1D1D29' : 'var(--secondary-button)',
                     }}
@@ -197,7 +245,8 @@ function CreateRepoModal({ onClose }) {
                   </button>
                   <button 
                     type="button"
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors w-20 mr-8 ${gitignore === 'no' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+                    disabled={isLoading}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors w-20 mr-8 ${gitignore === 'no' ? 'text-white' : 'text-gray-400 hover:text-white'} disabled:opacity-50 disabled:cursor-not-allowed`}
                     style={{
                       backgroundColor: gitignore === 'no' ? '#1D1D29' : 'var(--secondary-button)',
                     }}
@@ -212,15 +261,24 @@ function CreateRepoModal({ onClose }) {
             <div>
               <button 
                 type="submit" 
-                className="w-full py-3 rounded-lg font-semibold transition-colors hover:-translate-y-0.5"
+                disabled={isLoading}
+                className="w-full py-3 rounded-lg font-semibold transition-colors hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                 style={{
                   backgroundColor: 'var(--primary-button)',
                   color: 'var(--primary-text-color)'
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-button-hover)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-button)'}
+                onMouseEnter={(e) => {
+                  if (!isLoading) {
+                    e.currentTarget.style.backgroundColor = 'var(--primary-button-hover)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isLoading) {
+                    e.currentTarget.style.backgroundColor = 'var(--primary-button)';
+                  }
+                }}
               >
-                Create Repository
+                {isLoading ? 'Creating...' : 'Create Repository'}
               </button>
             </div>
           </form>

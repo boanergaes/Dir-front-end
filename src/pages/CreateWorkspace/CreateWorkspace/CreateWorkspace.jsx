@@ -7,49 +7,119 @@ const CreateWorkspace = () => {
   const [workspaceName, setWorkspaceName] = useState('');
   const [description, setDescription] = useState('');
   const [repoName, setRepoName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleOpenModal = () => {
-    console.log("Opening invite modal");
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    console.log("Closing modal");
     setIsModalOpen(false);
     setSearchInput('');
   };
 
-  const handleSendInvite = () => {
+  const handleSendInvite = async () => {
     if (!searchInput.trim()) {
       alert("Please enter a collaborator username");
       return;
     }
-    
+
     console.log(`Sending invite to: ${searchInput} as ${selectedRole}`);
-    alert(`Invitation sent to ${searchInput} as ${selectedRole}`);
+    
+    // Note: Your API has /api/repos/:repoId/members for inviting users
+    // This would need a workspace/repo ID which we don't have yet
+    alert(`Invitation will be sent to ${searchInput} as ${selectedRole} after workspace creation`);
     handleCloseModal();
   };
 
-  const handleCreateWorkspace = (e) => {
+  const handleCreateWorkspace = async (e) => {
     if (e) e.preventDefault();
-    
+
     if (!workspaceName.trim()) {
-      alert("Please enter a workspace name");
+      setError("Please enter a workspace name");
       return;
     }
-    
+
     if (!repoName.trim()) {
-      alert("Please enter a repository name");
+      setError("Please enter a repository name");
       return;
     }
-    
-    console.log(`Creating workspace: ${workspaceName} with repo: ${repoName}`);
-    alert(`Workspace "${workspaceName}" created successfully!`);
-    
-    // Reset form
-    setWorkspaceName('');
-    setDescription('');
-    setRepoName('');
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      // Use create-workspace API endpoint
+      const requestData = {
+        githubRepoName: repoName,
+        workspaceName: workspaceName,
+        description: description
+      };
+
+      const response = await fetch('http://localhost:5000/api/repos/create-workspace', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(requestData)
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        alert(`Workspace "${workspaceName}" created successfully!`);
+        
+        // Reset form
+        setWorkspaceName('');
+        setDescription('');
+        setRepoName('');
+        
+        // If we have an invite to send, do it now
+        if (searchInput.trim()) {
+          await handleInviteToWorkspace(data.data._id, searchInput, selectedRole);
+        }
+        
+        // Optionally redirect or refresh
+        setTimeout(() => {
+          window.location.href = '/workspaces';
+        }, 1000);
+        
+      } else {
+        setError(data.message || 'Failed to create workspace');
+      }
+    } catch (error) {
+      console.error('Error creating workspace:', error);
+      setError('Error creating workspace. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInviteToWorkspace = async (workspaceId, githubUsername, role) => {
+    try {
+      const inviteData = {
+        githubUsername: githubUsername,
+        role: role
+      };
+
+      const response = await fetch(`http://localhost:5000/api/repos/${workspaceId}/members`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(inviteData)
+      });
+
+      const data = await response.json();
+      if (data.status === 'success') {
+        console.log(`User ${githubUsername} invited successfully`);
+      }
+    } catch (error) {
+      console.error('Error inviting user:', error);
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -63,62 +133,89 @@ const CreateWorkspace = () => {
       <div className="bg-[var(--dimmer-dark-bg)] py-8 px-12 rounded-xl w-full max-w-[600px] flex flex-col gap-6 shadow-lg border border-[var(--main-border-color)] scale-90">
         <h1 className="text-1.4rem text-center mb-0.5">Create New Workspace</h1>
         <hr className="w-4/5 mx-auto mb-6 border border-[var(--main-border-color)]" />
-        
+
         <form onSubmit={handleCreateWorkspace}>
-          <div className="flex flex-col gap-2 mb-4">
-            <label htmlFor="workspaceName" className="text-[0.95rem] font-medium">Workspace name</label>
-            <input 
-              type="text" 
-              placeholder="My workspace.." 
-              id="workspaceName"
-              value={workspaceName}
-              onChange={(e) => setWorkspaceName(e.target.value)}
-              required
-              className="py-2 px-3 border border-[var(--main-border-color)] rounded-md bg-[#303036] text-[var(--primary-text-color)] text-[0.95rem] font-[var(--main-font-family)] focus:outline-none focus:border-[var(--active-text-color)]"
-            />
-          </div>
+          {error && (
+            <div className="mb-4 p-3 rounded-md text-sm" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
+              {error}
+            </div>
+          )}
           
           <div className="flex flex-col gap-2 mb-4">
+            <label htmlFor="workspaceName" className="text-[0.95rem] font-medium">Workspace name</label>
+            <input
+              type="text"
+              placeholder="My workspace.."
+              id="workspaceName"
+              value={workspaceName}
+              onChange={(e) => {
+                setWorkspaceName(e.target.value);
+                setError('');
+              }}
+              required
+              disabled={isLoading}
+              className="py-2 px-3 border border-[var(--main-border-color)] rounded-md bg-[#303036] text-[var(--primary-text-color)] text-[0.95rem] font-[var(--main-font-family)] focus:outline-none focus:border-[var(--active-text-color)] disabled:opacity-50"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2 mb-4">
             <label htmlFor="descriptionWorkspace" className="text-[0.95rem] font-medium">Description</label>
-            <textarea 
+            <textarea
               id="descriptionWorkspace"
               placeholder="This workspace is ..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows="4"
-              className="py-2 px-3 border border-[var(--main-border-color)] rounded-md bg-[#303036] text-[var(--primary-text-color)] text-[0.95rem] font-[var(--main-font-family)] focus:outline-none focus:border-[var(--active-text-color)] h-20"
+              disabled={isLoading}
+              className="py-2 px-3 border border-[var(--main-border-color)] rounded-md bg-[#303036] text-[var(--primary-text-color)] text-[0.95rem] font-[var(--main-font-family)] focus:outline-none focus:border-[var(--active-text-color)] h-20 disabled:opacity-50"
             />
           </div>
-          
+
           <div className="flex flex-col gap-2 mb-4">
-            <label htmlFor="workingRepository" className="text-[0.95rem] font-medium">Working Repository</label>
-            <input 
-              type="text" 
-              id="workingRepository" 
-              placeholder="Repo name..."
+            <label htmlFor="workingRepository" className="text-[0.95rem] font-medium">GitHub Repository Name</label>
+            <input
+              type="text"
+              id="workingRepository"
+              placeholder="Existing GitHub repo name..."
               value={repoName}
-              onChange={(e) => setRepoName(e.target.value)}
+              onChange={(e) => {
+                setRepoName(e.target.value);
+                setError('');
+              }}
               required
-              className="py-2 px-3 border border-[var(--main-border-color)] rounded-md bg-[#303036] text-[var(--primary-text-color)] text-[0.95rem] font-[var(--main-font-family)] focus:outline-none focus:border-[var(--active-text-color)]"
+              disabled={isLoading}
+              className="py-2 px-3 border border-[var(--main-border-color)] rounded-md bg-[#303036] text-[var(--primary-text-color)] text-[0.95rem] font-[var(--main-font-family)] focus:outline-none focus:border-[var(--active-text-color)] disabled:opacity-50"
             />
+            <p className="text-xs text-[var(--secondary-text-color)] mt-1">
+              Enter the name of an existing GitHub repository you own
+            </p>
           </div>
-          
+
           <div className="flex gap-4 mb-6">
-            <button 
-              type="button" 
-              className="flex-1 py-2.5 px-4 bg-[#1D1D29] text-[var(--primary-text-color)] border-none rounded-md cursor-pointer flex items-center justify-center gap-2 font-medium font-[var(--main-font-family)] hover:opacity-90 w-full"
+            <button
+              type="button"
+              disabled={isLoading}
+              className="flex-1 py-2.5 px-4 bg-[#1D1D29] text-[var(--primary-text-color)] border-none rounded-md cursor-pointer flex items-center justify-center gap-2 font-medium font-[var(--main-font-family)] hover:opacity-90 w-full disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleOpenModal}
             >
               Invite Collaborators
             </button>
-            <button type="button" className="flex-1 py-2.5 px-4 bg-[#1D1D29] text-[var(--primary-text-color)] border-none rounded-md cursor-pointer flex items-center justify-center gap-2 font-medium font-[var(--main-font-family)] hover:opacity-90 w-full">
+            <button 
+              type="button" 
+              disabled={isLoading}
+              className="flex-1 py-2.5 px-4 bg-[#1D1D29] text-[var(--primary-text-color)] border-none rounded-md cursor-pointer flex items-center justify-center gap-2 font-medium font-[var(--main-font-family)] hover:opacity-90 w-full disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <span className="plus-icon text-lg">+</span>Add Channel
             </button>
           </div>
-          
+
           <div className="flex justify-center mt-4">
-            <button type="submit" className="py-3 px-8 bg-[var(--primary-button)] text-[var(--primary-text-color)] border-none rounded-lg cursor-pointer font-semibold text-base font-[var(--main-font-family)] hover:bg-[var(--primary-button-hover)]">
-              Create Workspace
+            <button 
+              type="submit" 
+              disabled={isLoading}
+              className="py-3 px-8 bg-[var(--primary-button)] text-[var(--primary-text-color)] border-none rounded-lg cursor-pointer font-semibold text-base font-[var(--main-font-family)] hover:bg-[var(--primary-button-hover)] disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isLoading ? 'Creating...' : 'Create Workspace'}
             </button>
           </div>
         </form>
@@ -126,11 +223,11 @@ const CreateWorkspace = () => {
 
       {/* Invite Collaborators Modal */}
       {isModalOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/70 flex justify-center items-center z-[1000] backdrop-blur-sm animate-[fadeIn_0.3s_ease] "
           onClick={handleCloseModal}
         >
-          <div 
+          <div
             className="bg-[var(--dimmer-dark-bg)] rounded-xl w-full max-w-[480px] overflow-hidden border border-[var(--main-border-color)] animate-[slideUp_0.3s_ease] shadow-lg "
             onClick={(e) => e.stopPropagation()}
           >
@@ -138,12 +235,12 @@ const CreateWorkspace = () => {
               <h2 className="text-xl text-[var(--primary-text-color)] mb-2">Invite Collaborators</h2>
               <p className="text-sm text-[var(--secondary-text-color)] m-0">Search by Username, Full name or Email</p>
             </div>
-            
+
             <div className="pb-6 px-6 flex flex-col gap-4">
               <div className="w-full">
                 <div className="w-full">
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     onKeyPress={handleKeyPress}
@@ -153,16 +250,16 @@ const CreateWorkspace = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="flex flex-col">
                 <h3 className="text-base text-[var(--primary-text-color)] mb-3">Role</h3>
                 <hr className="border-t border-[var(--main-border-color)] mb-4" />
                 <div className="flex flex-row">
                   <label className="flex items-center gap-3 py-3 px-4 rounded-lg cursor-pointer transition-all duration-200">
-                    <input 
-                      type="radio" 
-                      name="role" 
-                      value="owner" 
+                    <input
+                      type="radio"
+                      name="role"
+                      value="owner"
                       checked={selectedRole === 'owner'}
                       onChange={(e) => setSelectedRole(e.target.value)}
                       className="hidden"
@@ -175,10 +272,10 @@ const CreateWorkspace = () => {
                     </span>
                   </label>
                   <label className="flex items-center gap-3 py-3 px-4 rounded-lg cursor-pointer transition-all duration-200">
-                    <input 
-                      type="radio" 
-                      name="role" 
-                      value="admin" 
+                    <input
+                      type="radio"
+                      name="role"
+                      value="admin"
                       checked={selectedRole === 'admin'}
                       onChange={(e) => setSelectedRole(e.target.value)}
                       className="hidden"
@@ -191,10 +288,10 @@ const CreateWorkspace = () => {
                     </span>
                   </label>
                   <label className="flex items-center gap-3 py-3 px-4 rounded-lg cursor-pointer transition-all duration-200">
-                    <input 
-                      type="radio" 
-                      name="role" 
-                      value="contributor" 
+                    <input
+                      type="radio"
+                      name="role"
+                      value="contributor"
                       checked={selectedRole === 'contributor'}
                       onChange={(e) => setSelectedRole(e.target.value)}
                       className="hidden"
@@ -209,16 +306,15 @@ const CreateWorkspace = () => {
                 </div>
               </div>
 
-              {/* buttons*/}
               <div className="flex flex-row gap-3 mt-4">
-                <button 
+                <button
                   className="flex-1 py-3.5 bg-[var(--primary-button)] text-[var(--primary-text-color)] border-none rounded-lg cursor-pointer font-semibold text-[0.95rem] font-[var(--main-font-family)] hover:bg-[var(--primary-button-hover)]"
                   onClick={handleSendInvite}
                   type="button"
                 >
                   Invite Collaborators
                 </button>
-                <button 
+                <button
                   className="flex-1 py-3.5 bg-[var(--primary-button)] text-[var(--primary-text-color)] border-none rounded-lg cursor-pointer font-medium text-[0.95rem] font-[var(--main-font-family)] hover:bg-[var(--primary-button-hover)]"
                   onClick={handleCloseModal}
                   type="button"
@@ -231,7 +327,6 @@ const CreateWorkspace = () => {
         </div>
       )}
 
-      {/* styles for animations */}
       <style jsx>{`
         @keyframes fadeIn {
           from { opacity: 0; }

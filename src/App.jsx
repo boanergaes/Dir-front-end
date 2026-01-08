@@ -1,5 +1,6 @@
 ﻿import "./App.css";
 import { Routes, Route } from "react-router";
+import Header from './common-components/Header/Header'
 import Dashboard from "./pages/Dashboard/Dashboard/Dashboard";
 import Repositories from "./pages/Repositories/Repositories";
 import Workspace from "./pages/Workspace/Workspace";
@@ -14,6 +15,7 @@ import CreateWorkspace from "./pages/CreateWorkspace/CreateWorkspace/CreateWorks
 function App() {
   return (
     <>
+    <Header/>
       {/* This is temporary routing to let everyone see the page they are building */}
       <Routes>
         <Route path="/" element={<Dashboard />} />

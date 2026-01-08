@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Folder,
+  Briefcase,
   Settings,
   Search,
   LogOut,
-  X,
-  Workflow
+  X
 } from 'lucide-react';
 
-function SidebarMenu({ isMenuOpen, onClose }) {
+function SidebarMenu({ isMenuOpen, onClose, userData, onLogout }) {
   const navigate = useNavigate();
 
   const handleMenuItemClick = (itemName) => {
@@ -56,10 +56,23 @@ function SidebarMenu({ isMenuOpen, onClose }) {
         className="flex items-center gap-4 mt-16 mb-8 px-4 py-3 rounded-lg mx-4"
         style={{ backgroundColor: 'var(--card-bg)' }}
       >
-        <img src="/assets/images/person.jpg" alt="person" className="w-12 h-12 rounded-full object-cover" />
+        <img 
+          src={userData?.avatarUrl || '/assets/images/person.jpg'} 
+          alt={userData?.githubUsername || 'Efrata'} 
+          className="w-12 h-12 rounded-full object-cover border border-gray-700" 
+        />
         <div>
-          <p className="font-semibold" style={{ color: 'var(--primary-text-color)' }}>Efrata</p>
-          <p className="text-sm" style={{ color: 'var(--secondary-text-color)' }}>@zeamanuel</p>
+          <p className="font-semibold" style={{ color: 'var(--primary-text-color)' }}>
+            {userData?.githubUsername || 'Efrata'}
+          </p>
+          <p className="text-sm" style={{ color: 'var(--secondary-text-color)' }}>
+            {userData?.email || '@zeamanuel'}
+          </p>
+          {userData?.githubRepoCount && (
+            <p className="text-xs mt-1" style={{ color: 'var(--secondary-text-color)', opacity: 0.7 }}>
+              {userData.githubRepoCount} repos on GitHub
+            </p>
+          )}
         </div>
       </div>
 
@@ -119,14 +132,13 @@ function SidebarMenu({ isMenuOpen, onClose }) {
             e.currentTarget.querySelector('svg').style.color = 'var(--secondary-text-color)';
           }}
         >
-          <Workflow size={20} style={{ color: 'var(--secondary-text-color)' }} />
+          <Briefcase size={20} style={{ color: 'var(--secondary-text-color)' }} />
           <span>Workspaces</span>
         </button>
 
         <button 
           onClick={() => {
             onClose();
-            
           }}
           className="flex items-center gap-3 w-full p-3 rounded-lg transition-colors"
           style={{ color: 'var(--secondary-text-color)' }}
@@ -167,26 +179,30 @@ function SidebarMenu({ isMenuOpen, onClose }) {
 
       <hr className="my-4 mx-4" style={{ borderColor: 'rgba(239, 238, 238, 0.2)' }} />
 
-      <button 
-        onClick={() => {
-          const confirmLogout = window.confirm('Are you sure you want to log out?');
-          if (confirmLogout) {
-            // Handle logout logic here
-          }
-          onClose();
-        }}
-        className="flex items-center gap-3 w-full p-3 rounded-lg transition-colors mx-4"
-        style={{ color: '#ff4757' }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = 'rgba(248, 81, 73, 0.1)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = 'transparent';
-        }}
-      >
-        <LogOut size={20} style={{ color: '#ff4757' }} />
-        <span>Log out</span>
-      </button>
+ <button 
+  onClick={() => {
+    if (onLogout) {
+      onLogout();
+    } else {
+      const confirmLogout = window.confirm('Are you sure you want to log out?');
+      if (confirmLogout) {
+        // Handle logout logic - now we have onLogout
+      }
+    }
+    onClose();
+  }}
+  className="flex items-center gap-3 w-full p-3 rounded-lg transition-colors mx-4"
+  style={{ color: '#ff4757' }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.backgroundColor = 'rgba(248, 81, 73, 0.1)';
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.backgroundColor = 'transparent';
+  }}
+>
+  <LogOut size={20} style={{ color: '#ff4757' }} />
+  <span>Log out</span>
+</button>
     </div>
   );
 }
