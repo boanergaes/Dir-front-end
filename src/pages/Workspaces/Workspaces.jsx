@@ -4,8 +4,10 @@ import WorkSpaceList from "./WorkSpaceList";
 import WorkSpacesHeader from "./WorkSpacesHeader";
 import { WorkspacesContext } from '../../context/WorkspacesContext/WorkspacesContext';
 import WorkspacesProvider from '../../context/WorkspacesContext/WorkspacesProvider';
+import { useUserBootstrap } from '../../hooks/useUserBootstrap';
 
 function WorkspacesContent() {
+  useUserBootstrap();
   return (
     <>
       <Header />

@@ -1,34 +1,10 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 import { WorkspacesContext } from './WorkspacesContext';
-import { mockWorkspaces } from '../../data/mockData';
 
 export default function WorkspacesProvider({ children }) {
   const [workspaces, setWorkspaces] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchWorkspaces = async () => {
-      setIsLoading(true);
-      try {
-        // TODO: Replace with real API call when integrating backend
-        // const response = await axios.get('/api/repos?isWorkspace=true');
-        // setWorkspaces(response.data.data);
-        
-        // Mock implementation - only repos that ARE workspaces
-        await new Promise(resolve => setTimeout(resolve, 400));
-        setWorkspaces(mockWorkspaces);
-      } catch (err) {
-        setError(err.message);
-        console.error('Failed to fetch workspaces:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchWorkspaces();
-  }, []);
 
   const getWorkspace = (workspaceId) => {
     return workspaces.find(ws => ws._id === workspaceId);
