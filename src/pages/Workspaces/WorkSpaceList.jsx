@@ -1,24 +1,33 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown, Search } from "lucide-react";
 import Button from "../../common-components/button";
 import WorkSpacesSlot from "./WorkSpacesSlot";
 import { WorkspacesContext } from '../../context/WorkspacesContext/WorkspacesContext';
 import { UserContext } from '../../context/UserContext/UserContext';
-import { mockLanguages, mockUsers } from '../../data/mockData';
+import { useWorkspacesApi } from '../../hooks/useWorkspacesApi';
 
 import { getRelativeTime } from '../../utils/utils';
 
 export default function WorkSpaceList() {
-  const { workspaces, isLoading } = useContext(WorkspacesContext);
+  const { workspaces, isLoading: contextLoading } = useContext(WorkspacesContext);
   const { user } = useContext(UserContext);
+  const { fetchWorkspaces, languagesByWorkspace, loading: apiLoading, error } = useWorkspacesApi();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredWorkspaces = workspaces.filter((ws) =>
-    ws.workspaceName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ws.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    fetchWorkspaces();
+  }, [fetchWorkspaces]);
+
+  const isLoading = contextLoading || apiLoading;
+
+  const filteredWorkspaces = useMemo(() => {
+    return (workspaces || []).filter((ws) =>
+      ws.workspaceName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ws.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm, workspaces]);
 
   const handleWorkspaceClick = (workspaceId) => {
     navigate(`/workspace/${workspaceId}`);
@@ -28,6 +37,14 @@ export default function WorkSpaceList() {
     return (
       <div className="flex items-center justify-center p-6" style={{ color: 'var(--secondary-text-color)' }}>
         Loading workspaces...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center p-6" style={{ color: 'var(--secondary-text-color)' }}>
+        {error}
       </div>
     );
   }
@@ -73,11 +90,8 @@ export default function WorkSpaceList() {
         borderColor: 'var(--main-border-color)'
       }}>
         {filteredWorkspaces.map((workspace) => {
-          const languages = mockLanguages[workspace._id] || [];
-          const contributors = workspace.members?.slice(0, 4).map(mem => {
-            const user = mockUsers.find(u => u._id === mem.userId);
-            return user?.avatarUrl || "https://via.placeholder.com/40";
-          }) || [];
+          const languages = languagesByWorkspace[workspace._id] || [];
+          const contributors = workspace.members?.slice(0, 4).map(mem => mem.avatarUrl || "https://via.placeholder.com/40") || [];
 
           return (
             <div key={workspace._id} onClick={() => handleWorkspaceClick(workspace._id)} className="w-full cursor-pointer">
