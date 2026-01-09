@@ -53,7 +53,7 @@ function CloneBtn({ cloneUrl }) {
         <div
             ref={popupRef}
             style={{ top: popupPosition.top, left: popupPosition.left }}
-            className="fixed w-80 bg-(--card-bg) border border-(--main-border-color) rounded-xl shadow-2xl p-4 z-[9999]"
+            className="fixed bg-(--card-bg) border border-(--main-border-color) rounded-xl shadow-2xl p-4 z-[9999]"
         >
             <div className="flex justify-between items-center mb-3">
                 <h3 className="text-sm font-bold text-(--primary-text-color)">Clone Repository</h3>
